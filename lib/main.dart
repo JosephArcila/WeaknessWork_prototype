@@ -22,16 +22,57 @@ class Tabata extends StatefulWidget {
 
 class _TabataState extends State<Tabata> {
   int tabataNumber = 0;
+  final List<String> paragraphs = [
+    'Barbell Complex Warm-Up \n' +
+        '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
+        '* Round 2: Deadlift, hang power snatch, overhead squat, snatch',
+    'Rings \n' +
+        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
+        '* Tuck to inverted hang, then skin the cat \n' +
+        '* Pike to inverted hang, then skin the cat \n' +
+        '* Strict muscle-up to support to L-sit \n' +
+        '* Shoulder stand back to L-support or straddle support \n' +
+        '* Forward roll back to L-support \n' +
+        '* Forward roll to hang \n' +
+        '*  Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
+        '* Front-lever attempt \n' +
+        '* Ring swings \n' +
+        '* Fly-away dismount (skin the cat and let go)',
+    'Basic Body Weight (BBW) \n' +
+        '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension \n' +
+        '* Round 2: Lunge, dip (strict), V-up, kipping pull-up, back extension \n' +
+        '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension \n' +
+        '* Round 4: Pose running drill',
+    'Dumbbell \n' +
+        '(Can be performed with one or two dumbbell(s) at a time) \n' +
+        '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
+        '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, Turkish get-up',
+    'Parallettes \n' +
+        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
+        '* Push-up/dive bomber push-up \n' +
+        '* Shoot-through to push-up to frog stand \n' +
+        '* L-sit pass-through to tuck planche \n' +
+        '* L-sit pass-through to shoulder stand \n' +
+        '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
+        '* Handstand pirouette walk',
+    'Kettlebell \n' +
+        '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
+        '* Swing, clean, clean and press, snatch, Turkish get-up \n'
+  ];
   @override
   Widget build(BuildContext context) {
     return Center(
       child: TextButton(
-          onPressed: () {
-            setState(() {
-              tabataNumber = Random().nextInt(8) + 1;
-            });
-          },
-          child: Image.asset('images/tabata$tabataNumber.png')),
+        onPressed: () {
+          setState(() {
+            tabataNumber = Random().nextInt(paragraphs.length);
+          });
+        },
+        child: Text(
+          paragraphs[tabataNumber],
+          style: TextStyle(fontSize: 20.0, color: Colors.white),
+        ),
+      ),
     );
   }
 }

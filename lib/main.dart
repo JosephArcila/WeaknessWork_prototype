@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 void main() => runApp(
       MaterialApp(
@@ -59,13 +58,14 @@ class _TabataState extends State<Tabata> {
         '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
         '* Swing, clean, clean and press, snatch, Turkish get-up \n'
   ];
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: TextButton(
         onPressed: () {
           setState(() {
-            tabataNumber = Random().nextInt(paragraphs.length);
+            tabataNumber = (tabataNumber + 1) % paragraphs.length;
           });
         },
         child: Text(

@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(
-      MaterialApp(
-        title: 'WeaknessWork',
-        home: Scaffold(
+void main() => runApp(WeaknessWorkApp());
+
+class WeaknessWorkApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'WeaknessWork',
+      home: Builder(
+        builder: (context) => Scaffold(
           backgroundColor: Colors.redAccent,
           appBar: AppBar(
             title: Text('WeaknessWork'),
             backgroundColor: Colors.redAccent,
           ),
           body: TabataPage(),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MovementSelectionPage()),
+                );
+              },
+              child: Text('Select Movement'),
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
+            ),
+          ),
         ),
       ),
     );
+  }
+}
 
 class Tabata extends StatefulWidget {
   @override
@@ -81,5 +102,43 @@ class TabataPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tabata();
+  }
+}
+
+class MovementSelectionPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final List<String> imageNames = [
+      'airsquat.jpg',
+      'frontsquat.jpg',
+      'overheadsquat.jpg',
+      'shoulderpress.jpg',
+      'pushpress.jpg',
+      'pushjerk.jpg',
+      'deadlift.jpg',
+      'sdhp.jpg',
+      'medicineballclean.jpg',
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Select Your Weakest Movement'),
+      ),
+      body: GridView.builder(
+        itemCount: imageNames.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 1.0,
+          mainAxisSpacing: 8.0,
+          crossAxisSpacing: 8.0,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Image.asset('images/${imageNames[index]}'),
+          );
+        },
+      ),
+    );
   }
 }

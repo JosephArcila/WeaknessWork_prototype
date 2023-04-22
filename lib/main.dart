@@ -3,6 +3,65 @@ import 'package:flutter/material.dart';
 void main() => runApp(WeaknessWorkApp());
 
 class WeaknessWorkApp extends StatelessWidget {
+  // Method to show the dialog
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('GENERAL WARM-UPS TO ADDRESS WEAKNESSES'),
+          content: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '\u2022',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text:
+                      ' These are general warm-ups by modality (weightlifting, gymnastics, cardio). Use them to add skill work to your program.\n',
+                ),
+                TextSpan(
+                  text: '\u2022',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text:
+                      ' Think of them as an opportunity to touch on skills that may or may not be present during today’s WOD.\n',
+                ),
+                TextSpan(
+                  text: '\u2022',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text:
+                      ' The general warm-ups below are progressive, performed for 2-3 rounds each, each getting slightly more complicated than the round before.\n',
+                ),
+                TextSpan(
+                  text: '\u2022',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text:
+                      ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout.',
+                ),
+              ],
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Understood'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,16 +76,28 @@ class WeaknessWorkApp extends StatelessWidget {
           body: TabataPage(),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MovementSelectionPage()),
-                );
-              },
-              child: Text('Select Movement'),
-              style: ElevatedButton.styleFrom(primary: Colors.blue),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _showDialog(context);
+                  },
+                  child: Text('Info'),
+                  style: ElevatedButton.styleFrom(primary: Colors.blue),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MovementSelectionPage()),
+                    );
+                  },
+                  child: Text('Movements'),
+                  style: ElevatedButton.styleFrom(primary: Colors.blue),
+                ),
+              ],
             ),
           ),
         ),

@@ -43,10 +43,10 @@ class Tabata extends StatefulWidget {
 class _TabataState extends State<Tabata> {
   int tabataNumber = 0;
   final List<String> paragraphs = [
-    'Day 1: Barbell Complex Warm-Up \n' +
+    'Barbell Complex Warm-Up \n' +
         '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
         '* Round 2: Deadlift, hang power snatch, overhead squat, snatch',
-    'Day 2: Rings \n' +
+    'Rings \n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
         '* Tuck to inverted hang, then skin the cat \n' +
         '* Pike to inverted hang, then skin the cat \n' +
@@ -58,16 +58,16 @@ class _TabataState extends State<Tabata> {
         '* Front-lever attempt \n' +
         '* Ring swings \n' +
         '* Fly-away dismount (skin the cat and let go)',
-    'Day 3: Basic Body Weight (BBW) \n' +
+    'Basic Body Weight (BBW) \n' +
         '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension \n' +
         '* Round 2: Lunge, dip (strict), V-up, kipping pull-up, back extension \n' +
         '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension \n' +
         '* Round 4: Pose running drill',
-    'Day 4: Dumbbell \n' +
+    'Dumbbell \n' +
         '(Can be performed with one or two dumbbell(s) at a time) \n' +
         '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
         '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, Turkish get-up',
-    'Day 5: Parallettes \n' +
+    'Parallettes \n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
         '* Push-up/dive bomber push-up \n' +
         '* Shoot-through to push-up to frog stand \n' +
@@ -75,10 +75,36 @@ class _TabataState extends State<Tabata> {
         '* L-sit pass-through to shoulder stand \n' +
         '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
         '* Handstand pirouette walk',
-    'Day 6: Kettlebell \n' +
+    'Kettlebell \n' +
         '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
         '* Swing, clean, clean and press, snatch, Turkish get-up \n'
   ];
+
+  List<InlineSpan> parseText(String text) {
+    List<String> lines = text.split('\n');
+    List<InlineSpan> spans = [];
+    for (String line in lines) {
+      if (line.startsWith('*')) {
+        spans.add(TextSpan(
+            text: '\u2022',
+            style: TextStyle(fontWeight: FontWeight.bold, height: 1.5)));
+        spans.add(
+            TextSpan(text: line.substring(1), style: TextStyle(height: 1.5)));
+      } else if (line.startsWith('(Can be performed') ||
+          line.startsWith('(Create a mini routine')) {
+        spans.add(TextSpan(
+            text: line,
+            style: TextStyle(fontStyle: FontStyle.italic, height: 1.5)));
+      } else {
+        spans.add(TextSpan(
+            text: line,
+            style:
+                TextStyle(decoration: TextDecoration.underline, height: 1.5)));
+      }
+      spans.add(TextSpan(text: '\n'));
+    }
+    return spans;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +115,11 @@ class _TabataState extends State<Tabata> {
             tabataNumber = (tabataNumber + 1) % paragraphs.length;
           });
         },
-        child: Text(
-          paragraphs[tabataNumber],
-          style: TextStyle(fontSize: 20.0, color: Colors.white),
+        child: RichText(
+          text: TextSpan(
+            children: parseText(paragraphs[tabataNumber]),
+            style: TextStyle(fontSize: 20.0, color: Colors.white),
+          ),
         ),
       ),
     );
@@ -124,20 +152,36 @@ class MovementSelectionPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Select Your Weakest Movement'),
       ),
-      body: GridView.builder(
-        itemCount: imageNames.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 1.0,
-          mainAxisSpacing: 8.0,
-          crossAxisSpacing: 8.0,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Image.asset('images/${imageNames[index]}'),
-          );
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              itemCount: imageNames.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.0,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Image.asset('images/${imageNames[index]}'),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Update'),
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
+            ),
+          ),
+        ],
       ),
     );
   }

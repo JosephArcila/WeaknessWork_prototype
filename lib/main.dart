@@ -19,7 +19,7 @@ class WeaknessWorkApp extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      ' These are general warm-ups by modality (weightlifting, gymnastics, cardio). Use them to add skill work to your program.\n',
+                      ' These are general warm-ups by modality (weightlifting, gymnastics, cardio) from the CrossFit Level 2 Training Guide. Use them to add skill work to your program.\n',
                 ),
                 TextSpan(
                   text: '\u2022',
@@ -79,12 +79,12 @@ class WeaknessWorkApp extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
+                IconButton(
                   onPressed: () {
                     _showDialog(context);
                   },
-                  child: Text('Info'),
-                  style: ElevatedButton.styleFrom(primary: Colors.blue),
+                  icon: Icon(Icons.info_outline),
+                  color: Colors.white,
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -220,6 +220,7 @@ class MovementSelectionPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.grey[500],
       appBar: AppBar(
         title: Text('Select Your Weakest Movement'),
       ),
@@ -237,7 +238,17 @@ class MovementSelectionPage extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Image.asset('images/${imageNames[index]}'),
+                  child: InkWell(
+                    onTap: () {
+                      // Handle image button click here
+                      print('Image ${index + 1} clicked');
+                    },
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.asset('images/${imageNames[index]}',
+                          fit: BoxFit.scaleDown),
+                    ),
+                  ),
                 );
               },
             ),

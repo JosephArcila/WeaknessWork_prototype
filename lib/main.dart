@@ -155,8 +155,9 @@ class _WarmupState extends State<Warmup> {
         '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension \n' +
         '* Round 4: Pose running drill',
     'Dumbbell \n' +
-        '(Can be performed with one or two dumbbell(s) at a time) \n' +
+        '(Performed with two dumbbells at a time) \n' +
         '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
+        '(Performed with one dumbbell at a time) \n' +
         '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, Turkish get-up',
     'Parallettes \n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
@@ -200,31 +201,44 @@ class _WarmupState extends State<Warmup> {
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
       // Modify paragraphs list based on the new requirements
-      paragraphs[0] = 'Barbell Complex Warm-Up \n' +
-          '* Round 1: Overhead squat with a 2.5-lb on the dowel pressing the bar up and pull it back over midfoot, deadlift, hang power clean, front squat, press, thruster, overhead squat with a 5-lb on the dowel pressing the bar up and pull it back over midfoot \n' +
-          '* Round 2: overhead squat with a 7.5-lb on the dowel pressing the bar up and pull it back over midfoot, deadlift, hang power snatch, overhead squat with a 10-lb on the dowel pressing the bar up and pull it back over midfoot, snatch balance \n' +
-          '* Round 3: Overhead squat using a 15-lb training bar while maintaining perfect form, thruster to overhead squat';
-      paragraphs[2] = 'Basic Body Weight (BBW) \n' +
-          '* Round 1: Maintain a rock-bottom squat with your back arched, head and eyes forward, and body weight predominantly on your heels for 3 to 5 minutes, push-up, sit-up, pull-up (strict), hip extension, pass-throughs starting with a grip wide enough to easily pass through, and then repeatedly bring the hands in closer until passing through presents a moderate stretch of the shoulders \n' +
-          '* Round 2: Lunge, dip (strict), V-up, kipping pull-up, back extension, Pass-through at the top, the bottom, and everywhere in between while descending into the squat. Practice by stopping at several points on the path to the bottom, hold, and gently, slowly, swing the dowel from front to back, again, with locked arms. At the bottom of each squat, slowly bring the dowel back and forth moving from front to back \n' +
-          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, with your eyes closed, find the frontal plane with the dowel from every position in the squat. Bring the dowel to a stop in the frontal plane and hold briefly with each pass-through \n' +
-          '* Round 4: Pose running drill, stand tall with the dowel held as high as possible in the frontal plane directly overhead. Very slowly lower to the bottom of the squat, keeping the dowel in the frontal plane the entire time. Pull the dowel back very deliberately as you descend';
-      paragraphs[3] = 'Dumbbell \n' +
-          '(Can be performed with one or two dumbbell(s) at a time) \n' +
-          '* Round 1: Deadlift, hang power clean, front squat, press, single-arm overhead squat \n' +
-          '* Round 2: Deadlift, hang power snatch, overhead squat, single-arm snatch balance, Turkish get-up';
-      paragraphs[4] = 'Parallettes \n' +
+      paragraphs[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
+          '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
+          '* Round 2: Round 2: Deadlift, hang power snatch, overhead squat (with pause), sots press, snatch balance \n';
+      paragraphs[1] = 'Rings Warm-Up for Overhead Squat \n' +
+          '* Tuck to inverted hang, then skin the cat \n' +
+          '* Pike to inverted hang, then skin the cat \n' +
+          '* Strict muscle-up to support to L-sit \n' +
+          '* Shoulder stand back to L-support or straddle support \n' +
+          '* Forward roll back to L-support \n' +
+          '* Forward roll to hang \n' +
+          '* Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
+          '* Front-lever attempt \n' +
+          '* False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
+          '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
+      paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Overhead Squat \n' +
+          '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension, overhead squat with PVC pipe or broomstick \n' +
+          '* Round 2: Lunge, dip (strict), v-up, kipping pull-up, back extension, overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
+          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
+      paragraphs[3] = 'Dumbbell Warm-Up for Overhead Squat \n' +
+          '(Performed with two dumbbells at a time) \n' +
+          '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
+          '(Performed with one dumbbell at a time) \n' +
+          '* Round 2: Deadlift, hang power snatch, single-arm overhead squat, snatch, Turkish get-up';
+      paragraphs[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-          '* Handstand push-ups \n' +
           '* Push-up/dive bomber push-up \n' +
           '* Shoot-through to push-up to frog stand \n' +
           '* L-sit pass-through to tuck planche \n' +
           '* L-sit pass-through to shoulder stand \n' +
           '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
-          '* Handstand pirouette walk';
-      paragraphs[5] = 'Kettlebell \n' +
+          '* Handstand pirouette walk \n' +
+          '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds) \n' +
+          '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability) \n' +
+          '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
+      paragraphs[5] = 'Kettlebell Warm-Up for Overhead Squat \n' +
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-          '* Swing, clean, clean and press, snatch, single-arm overhead squat, Turkish get-up';
+          '* Round 1: Swing, goblet squat, clean, press, single-arm overhead squat \n' +
+          '* Round 2: Swing, clean, clean and press, snatch, Turkish get-up';
     }
   }
 

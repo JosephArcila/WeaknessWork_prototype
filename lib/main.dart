@@ -183,7 +183,9 @@ class _WarmupState extends State<Warmup> {
         spans.add(
             TextSpan(text: line.substring(1), style: TextStyle(height: 1.5)));
       } else if (line.startsWith('(Can be performed') ||
-          line.startsWith('(Create a mini routine')) {
+          line.startsWith('(Create a mini routine') ||
+          line.startsWith('(Performed with two dumbbells') ||
+          line.startsWith('(Performed with one dumbbell')) {
         spans.add(TextSpan(
             text: line,
             style: TextStyle(fontStyle: FontStyle.italic, height: 1.5)));
@@ -191,12 +193,13 @@ class _WarmupState extends State<Warmup> {
         spans.add(TextSpan(
             text: line,
             style:
-                TextStyle(decoration: TextDecoration.underline, height: 1.5)));
+            TextStyle(decoration: TextDecoration.underline, height: 1.5)));
       }
       spans.add(TextSpan(text: '\n'));
     }
     return spans;
   }
+
 
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg

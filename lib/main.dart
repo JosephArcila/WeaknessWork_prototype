@@ -135,8 +135,8 @@ class _WarmupState extends State<Warmup> {
   int selectedMovementIndex;
   final List<String> paragraphs = [
     'Barbell Complex Warm-Up \n' +
-        '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
-        '* Round 2: Deadlift, hang power snatch, overhead squat, snatch',
+        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
     'Rings \n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
         '* Tuck to inverted hang, then skin the cat \n' +
@@ -150,15 +150,15 @@ class _WarmupState extends State<Warmup> {
         '* Ring swings \n' +
         '* Fly-away dismount (skin the cat and let go)',
     'Basic Body Weight (BBW) \n' +
-        '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension \n' +
-        '* Round 2: Lunge, dip (strict), V-up, kipping pull-up, back extension \n' +
-        '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension \n' +
+        '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension \n' +
+        '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension \n' +
+        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension \n' +
         '* Round 4: Pose running drill',
     'Dumbbell \n' +
         '(Performed with two dumbbells at a time) \n' +
-        '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
+        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
         '(Performed with one dumbbell at a time) \n' +
-        '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, Turkish get-up',
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up',
     'Parallettes \n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
         '* Push-up/dive bomber push-up \n' +
@@ -169,7 +169,7 @@ class _WarmupState extends State<Warmup> {
         '* Handstand pirouette walk',
     'Kettlebell \n' +
         '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-        '* Swing, clean, clean and press, snatch, Turkish get-up \n'
+        '* Swing, Clean, Clean and press, Snatch, Turkish get-up \n'
   ];
 
   List<InlineSpan> parseText(String text) {
@@ -204,8 +204,8 @@ class _WarmupState extends State<Warmup> {
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
       paragraphs[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
-          '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
-          '* Round 2: Deadlift, hang power snatch, overhead squat (with pause), sots press, snatch balance';
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
+          '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
       paragraphs[1] = 'Rings Warm-Up for Overhead Squat \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
@@ -218,14 +218,14 @@ class _WarmupState extends State<Warmup> {
           '* False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
           '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
       paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Overhead Squat \n' +
-          '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension, overhead squat with PVC pipe or broomstick \n' +
-          '* Round 2: Lunge, dip (strict), v-up, kipping pull-up, back extension, overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
-          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
+          '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
+          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
+          '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
       paragraphs[3] = 'Dumbbell Warm-Up for Overhead Squat \n' +
           '(Performed with two dumbbells at a time) \n' +
-          '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
           '(Performed with one dumbbell at a time) \n' +
-          '* Round 2: Deadlift, hang power snatch, single-arm overhead squat, snatch, turkish get-up';
+          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up';
       paragraphs[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Push-up/dive bomber push-up \n' +
@@ -239,14 +239,14 @@ class _WarmupState extends State<Warmup> {
           '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
       paragraphs[5] = 'Kettlebell Warm-Up for Overhead Squat \n' +
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-          '* Round 1: Swing, goblet squat, clean, press, single-arm overhead squat \n' +
-          '* Round 2: Swing, clean, clean and press, snatch, Turkish get-up';
+          '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat \n' +
+          '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
     }
     if (selectedMovementIndex == 3) { // index for shoulderpress.jpg
       paragraphs[0] = 'Barbell Complex Warm-Up for Shoulder Press \n' +
-          '* Round 1: Deadlift, hang power clean, front squat, strict press (focus on form and control), thruster \n' +
-          '* Round 2: Deadlift, hang power snatch, overhead squat, push press (increase weight to challenge shoulder strength), snatch \n' +
-          '* Round 3: Deadlift, hang power clean and jerk, front squat to push press (aka "Thruster"), shoulder press (with pause at the bottom and top of the movement), behind the neck push press or snatch grip push press (focus on stability and control)';
+          '* Round 1: Deadlift, Hang power clean, Front squat, Strict press (focus on form and control), Thruster \n' +
+          '* Round 2: Deadlift, Hang power snatch, Overhead squat, Push press (increase weight to challenge shoulder strength), Snatch \n' +
+          '* Round 3: Deadlift, Hang power clean and jerk, Front squat to push press (aka "Thruster"), Shoulder press (with pause at the bottom and top of the movement), Behind the neck push press or snatch grip push press (focus on stability and control)';
       paragraphs[1] = 'Rings Warm-Up for Shoulder Press \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
@@ -261,16 +261,16 @@ class _WarmupState extends State<Warmup> {
           '* Ring push-ups (emphasize control and proper form) \n' +
           '* Fly-away dismount (skin the cat and let go)';
       paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Shoulder Press \n' +
-          '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension, pike push-up (to target shoulders more effectively) \n' +
-          '* Round 2: Lunge, dip (strict), v-up, kipping pull-up, back extension, handstand hold against a wall (to build shoulder strength and stability) \n' +
-          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, inverted shoulder taps (with feet elevated on a box or bench) \n' +
-          '* Round 4: Pose running drill, shoulder tap push-ups (alternate tapping shoulders after each push-up)';
+          '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Pike push-up (to target shoulders more effectively) \n' +
+          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Handstand hold against a wall (to build shoulder strength and stability) \n' +
+          '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Inverted shoulder taps (with feet elevated on a box or bench) \n' +
+          '* Round 4: Pose running drill, Shoulder tap push-ups (alternate tapping shoulders after each push-up)';
       paragraphs[3] = 'Dumbbell Warm-Up for Shoulder Press \n' +
           '(Performed with two dumbbells at a time) \n' +
-          '* Round 1: Deadlift, hang power clean, front squat, press (focus on shoulder press), thruster \n' +
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press (focus on shoulder press), Thruster \n' +
           '(Performed with one dumbbell at a time) \n' +
-          '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, turkish get-up \n' +
-          '* Round 3: Seated single-arm dumbbell shoulder press (alternate arms, focus on strict form), dumbbell front raise (alternate arms), Dumbbell lateral raise (alternate arms), Dumbbell rear delt fly (bent-over position), Dumbbell upright row';
+          '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up \n' +
+          '* Round 3: Seated single-arm dumbbell shoulder press (alternate arms, focus on strict form), Dumbbell front raise (alternate arms), Dumbbell lateral raise (alternate arms), Dumbbell rear delt fly (bent-over position), Dumbbell upright row';
       paragraphs[4] = 'Parallettes Warm-Up for Shoulder Press \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Round 1: Push-up/dive bomber push-up (focus on shoulder engagement), Shoot-through to push-up to frog stand, L-sit pass-through to tuck planche, L-sit pass-through to shoulder stand, Pike push-up \n' +

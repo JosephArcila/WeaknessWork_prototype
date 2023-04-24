@@ -203,10 +203,9 @@ class _WarmupState extends State<Warmup> {
 
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
-      // Modify paragraphs list based on the new requirements
       paragraphs[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
           '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
-          '* Round 2: Round 2: Deadlift, hang power snatch, overhead squat (with pause), sots press, snatch balance \n';
+          '* Round 2: Deadlift, hang power snatch, overhead squat (with pause), sots press, snatch balance';
       paragraphs[1] = 'Rings Warm-Up for Overhead Squat \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
@@ -226,7 +225,7 @@ class _WarmupState extends State<Warmup> {
           '(Performed with two dumbbells at a time) \n' +
           '* Round 1: Deadlift, hang power clean, front squat, press, overhead squat \n' +
           '(Performed with one dumbbell at a time) \n' +
-          '* Round 2: Deadlift, hang power snatch, single-arm overhead squat, snatch, Turkish get-up';
+          '* Round 2: Deadlift, hang power snatch, single-arm overhead squat, snatch, turkish get-up';
       paragraphs[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Push-up/dive bomber push-up \n' +
@@ -242,6 +241,44 @@ class _WarmupState extends State<Warmup> {
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
           '* Round 1: Swing, goblet squat, clean, press, single-arm overhead squat \n' +
           '* Round 2: Swing, clean, clean and press, snatch, Turkish get-up';
+    }
+    if (selectedMovementIndex == 3) { // index for shoulderpress.jpg
+      paragraphs[0] = 'Barbell Complex Warm-Up for Shoulder Press \n' +
+          '* Round 1: Deadlift, hang power clean, front squat, strict press (focus on form and control), thruster \n' +
+          '* Round 2: Deadlift, hang power snatch, overhead squat, push press (increase weight to challenge shoulder strength), snatch \n' +
+          '* Round 3: Deadlift, hang power clean and jerk, front squat to push press (aka "Thruster"), shoulder press (with pause at the bottom and top of the movement), behind the neck push press or snatch grip push press (focus on stability and control)';
+      paragraphs[1] = 'Rings Warm-Up for Shoulder Press \n' +
+          '* Tuck to inverted hang, then skin the cat \n' +
+          '* Pike to inverted hang, then skin the cat \n' +
+          '* Strict muscle-up to support to L-sit \n' +
+          '* Shoulder stand back to L-support or straddle support \n' +
+          '* Forward roll back to L-support \n' +
+          '* Forward roll to hang \n' +
+          '* Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
+          '* Front-lever attempt \n' +
+          '* Ring swings \n' +
+          '* Ring dips (focus on full range of motion and controlled movement) \n' +
+          '* Ring push-ups (emphasize control and proper form) \n' +
+          '* Fly-away dismount (skin the cat and let go)';
+      paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Shoulder Press \n' +
+          '* Round 1: Squat, push-up, sit-up, pull-up (strict), hip extension, pike push-up (to target shoulders more effectively) \n' +
+          '* Round 2: Lunge, dip (strict), v-up, kipping pull-up, back extension, handstand hold against a wall (to build shoulder strength and stability) \n' +
+          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, inverted shoulder taps (with feet elevated on a box or bench) \n' +
+          '* Round 4: Pose running drill, shoulder tap push-ups (alternate tapping shoulders after each push-up)';
+      paragraphs[3] = 'Dumbbell Warm-Up for Shoulder Press \n' +
+          '(Performed with two dumbbells at a time) \n' +
+          '* Round 1: Deadlift, hang power clean, front squat, press (focus on shoulder press), thruster \n' +
+          '(Performed with one dumbbell at a time) \n' +
+          '* Round 2: Deadlift, hang power snatch, overhead squat, snatch, turkish get-up \n' +
+          '* Round 3: Seated single-arm dumbbell shoulder press (alternate arms, focus on strict form), dumbbell front raise (alternate arms), Dumbbell lateral raise (alternate arms), Dumbbell rear delt fly (bent-over position), Dumbbell upright row';
+      paragraphs[4] = 'Parallettes Warm-Up for Shoulder Press \n' +
+          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
+          '* Round 1: Push-up/dive bomber push-up (focus on shoulder engagement), Shoot-through to push-up to frog stand, L-sit pass-through to tuck planche, L-sit pass-through to shoulder stand, Pike push-up \n' +
+          '* Round 2: Handstand hold (focus on shoulder stability and strength), Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand), Handstand shoulder taps (focus on shoulder stability), Handstand push-up, Handstand pirouette walk';
+      paragraphs[5] = 'Kettlebell Warm-Up for Shoulder Press \n' +
+          '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
+          '* Round 1: Swing, clean, Clean and press (focus on shoulder engagement), Turkish get-up (partial, up to the hand-supported sitting position), Halo (circular movement around the head) \n' +
+          '* Round 2: Swing, clean, Push press (incorporate a slight dip and drive from the legs to support the shoulder press), snatch, Turkish get-up (full movement)';
     }
   }
 

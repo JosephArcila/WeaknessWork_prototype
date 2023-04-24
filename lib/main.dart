@@ -321,16 +321,6 @@ class MovementSelectionPage extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, null); // Pass the selected movement index
-              },
-              child: Text('Update'),
-              style: ElevatedButton.styleFrom(primary: Colors.blue),
-            ),
-          ),
         ],
       ),
     );

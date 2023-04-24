@@ -239,10 +239,15 @@ class _WarmupState extends State<Warmup> {
             warmupNumber = (warmupNumber + 1) % paragraphs.length;
           });
         },
-        child: RichText(
-          text: TextSpan(
-            children: parseText(paragraphs[warmupNumber]),
-            style: TextStyle(fontSize: 20.0, color: Colors.white),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: RichText(
+              text: TextSpan(
+                children: parseText(paragraphs[warmupNumber]),
+                style: TextStyle(fontSize: 20.0, color: Colors.white),
+              ),
+            ),
           ),
         ),
       ),

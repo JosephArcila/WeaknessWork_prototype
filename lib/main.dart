@@ -2,7 +2,18 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(WeaknessWorkApp());
 
-class WeaknessWorkApp extends StatelessWidget {
+class WeaknessWorkApp extends StatefulWidget {
+  @override
+  _WeaknessWorkAppState createState() => _WeaknessWorkAppState();
+}
+
+class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
+  // Create a global key for the _WarmupState
+  final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
+
+  // Add this getter
+  _WarmupState get _warmupState => _warmupStateKey.currentState;
+
   // Method to show the dialog
   void _showDialog(BuildContext context) {
     showDialog(
@@ -73,7 +84,7 @@ class WeaknessWorkApp extends StatelessWidget {
             title: Text('WeaknessWork'),
             backgroundColor: Colors.redAccent,
           ),
-          body: TabataPage(),
+          body: Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -87,12 +98,16 @@ class WeaknessWorkApp extends StatelessWidget {
                   color: Colors.white,
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    int result = await Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => MovementSelectionPage()),
+                      MaterialPageRoute(builder: (context) => MovementSelectionPage()),
                     );
+                    if (result != null) {
+                      setState(() {
+                        _warmupState.selectedMovementIndex = result;
+                      });
+                    }
                   },
                   child: Text('Movements'),
                   style: ElevatedButton.styleFrom(primary: Colors.blue),
@@ -106,13 +121,18 @@ class WeaknessWorkApp extends StatelessWidget {
   }
 }
 
-class Tabata extends StatefulWidget {
+class Warmup extends StatefulWidget {
+  final GlobalKey<_WarmupState> warmupKey;
+
+  Warmup({@required this.warmupKey}) : super(key: warmupKey);
+
   @override
-  _TabataState createState() => _TabataState();
+  _WarmupState createState() => _WarmupState();
 }
 
-class _TabataState extends State<Tabata> {
-  int tabataNumber = 0;
+class _WarmupState extends State<Warmup> {
+  int warmupNumber = 0;
+  int selectedMovementIndex;
   final List<String> paragraphs = [
     'Barbell Complex Warm-Up \n' +
         '* Round 1: Deadlift, hang power clean, front squat, press, thruster \n' +
@@ -177,30 +197,56 @@ class _TabataState extends State<Tabata> {
     return spans;
   }
 
+  void updateParagraphs() {
+    if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
+      // Modify paragraphs list based on the new requirements
+      paragraphs[0] = 'Barbell Complex Warm-Up \n' +
+          '* Round 1: Overhead squat with a 2.5-lb on the dowel pressing the bar up and pull it back over midfoot, deadlift, hang power clean, front squat, press, thruster, overhead squat with a 5-lb on the dowel pressing the bar up and pull it back over midfoot \n' +
+          '* Round 2: overhead squat with a 7.5-lb on the dowel pressing the bar up and pull it back over midfoot, deadlift, hang power snatch, overhead squat with a 10-lb on the dowel pressing the bar up and pull it back over midfoot, snatch balance \n' +
+          '* Round 3: Overhead squat using a 15-lb training bar while maintaining perfect form, thruster to overhead squat';
+      paragraphs[2] = 'Basic Body Weight (BBW) \n' +
+          '* Round 1: Maintain a rock-bottom squat with your back arched, head and eyes forward, and body weight predominantly on your heels for 3 to 5 minutes, push-up, sit-up, pull-up (strict), hip extension, pass-throughs starting with a grip wide enough to easily pass through, and then repeatedly bring the hands in closer until passing through presents a moderate stretch of the shoulders \n' +
+          '* Round 2: Lunge, dip (strict), V-up, kipping pull-up, back extension, Pass-through at the top, the bottom, and everywhere in between while descending into the squat. Practice by stopping at several points on the path to the bottom, hold, and gently, slowly, swing the dowel from front to back, again, with locked arms. At the bottom of each squat, slowly bring the dowel back and forth moving from front to back \n' +
+          '* Round 3: Pistol, handstand push-up, toes-to-bar (straight leg and strict), muscle-up (strict), hip and back extension, with your eyes closed, find the frontal plane with the dowel from every position in the squat. Bring the dowel to a stop in the frontal plane and hold briefly with each pass-through \n' +
+          '* Round 4: Pose running drill, stand tall with the dowel held as high as possible in the frontal plane directly overhead. Very slowly lower to the bottom of the squat, keeping the dowel in the frontal plane the entire time. Pull the dowel back very deliberately as you descend';
+      paragraphs[3] = 'Dumbbell \n' +
+          '(Can be performed with one or two dumbbell(s) at a time) \n' +
+          '* Round 1: Deadlift, hang power clean, front squat, press, single-arm overhead squat \n' +
+          '* Round 2: Deadlift, hang power snatch, overhead squat, single-arm snatch balance, Turkish get-up';
+      paragraphs[4] = 'Parallettes \n' +
+          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
+          '* Handstand push-ups \n' +
+          '* Push-up/dive bomber push-up \n' +
+          '* Shoot-through to push-up to frog stand \n' +
+          '* L-sit pass-through to tuck planche \n' +
+          '* L-sit pass-through to shoulder stand \n' +
+          '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
+          '* Handstand pirouette walk';
+      paragraphs[5] = 'Kettlebell \n' +
+          '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
+          '* Swing, clean, clean and press, snatch, single-arm overhead squat, Turkish get-up';
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    updateParagraphs();
     return Center(
       child: TextButton(
         onPressed: () {
           setState(() {
-            tabataNumber = (tabataNumber + 1) % paragraphs.length;
+            warmupNumber = (warmupNumber + 1) % paragraphs.length;
           });
         },
         child: RichText(
           text: TextSpan(
-            children: parseText(paragraphs[tabataNumber]),
+            children: parseText(paragraphs[warmupNumber]),
             style: TextStyle(fontSize: 20.0, color: Colors.white),
           ),
         ),
       ),
     );
-  }
-}
-
-class TabataPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Tabata();
   }
 }
 
@@ -240,8 +286,8 @@ class MovementSelectionPage extends StatelessWidget {
                   padding: const EdgeInsets.all(4.0),
                   child: InkWell(
                     onTap: () {
-                      // Handle image button click here
-                      print('Image ${index + 1} clicked');
+                      // Pass the selected movement index to the previous screen
+                      Navigator.pop(context, index);
                     },
                     child: AspectRatio(
                       aspectRatio: 1,
@@ -257,7 +303,7 @@ class MovementSelectionPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, null); // Pass the selected movement index
               },
               child: Text('Update'),
               style: ElevatedButton.styleFrom(primary: Colors.blue),

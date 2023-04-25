@@ -20,44 +20,46 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('GENERAL WARM-UPS TO ADDRESS WEAKNESSES'),
-          content: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '\u2022',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text:
-                      ' These are general warm-ups by modality (weightlifting, gymnastics, cardio) from the CrossFit Level 2 Training Guide. Use them to add skill work to your program.\n',
-                ),
-                TextSpan(
-                  text: '\u2022',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text:
-                      ' Think of them as an opportunity to touch on skills that may or may not be present during today’s WOD.\n',
-                ),
-                TextSpan(
-                  text: '\u2022',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text:
-                      ' The general warm-ups below are progressive, performed for 2-3 rounds each, each getting slightly more complicated than the round before.\n',
-                ),
-                TextSpan(
-                  text: '\u2022',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text:
-                      ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout.',
-                ),
-              ],
-              style: TextStyle(fontSize: 16.0),
+          title: Text('General Warm-Ups to Address Weaknesses'),
+          content: SingleChildScrollView(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '\u2022',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        ' These are warm-ups by modality from the CrossFit Traning Level 2 Guide. Use them to add skill work to your program.\n\n',
+                  ),
+                  TextSpan(
+                    text: '\u2022',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        ' Think of them as an opportunity to touch on skills.\n\n',
+                  ),
+                  TextSpan(
+                    text: '\u2022',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        ' The warm-ups below are progressive, performed for 2-3 rounds, each getting slightly more complicated.\n\n',
+                  ),
+                  TextSpan(
+                    text: '\u2022',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout.',
+                  ),
+                ],
+                style: TextStyle(fontSize: 16.0, color: Colors.black),
+              ),
             ),
           ),
           actions: <Widget>[

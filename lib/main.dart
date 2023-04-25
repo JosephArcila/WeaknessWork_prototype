@@ -334,47 +334,154 @@ class MovementSelectionPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double titleFontSize = screenWidth < 350 ? 14.0 : 16.0;
 
-    return Scaffold(
-      backgroundColor: Color(0xFFE8E2CA),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF759E80), // Set AppBar background color to #759E80
-        title: Text(
-          'Update Warm-ups: Choose Your Weakest Movement',
-          maxLines: 2,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: titleFontSize),
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              itemCount: imageNames.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1.0,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Color(0xFFE8E2CA),
+        appBar: AppBar(
+          backgroundColor: Color(0xFF759E80),
+          title: Text(
+            'Assess and Improve Weaknesses',
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: titleFontSize),
+          ),
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                icon: Icon(Icons.foundation), // Use appropriate icon
+                text: 'Movements',
               ),
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: InkWell(
-                    onTap: () {
-                      // Pass the selected movement index to the previous screen
-                      Navigator.pop(context, index);
-                    },
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.asset('images/${imageNames[index]}',
-                          fit: BoxFit.scaleDown),
+              Tab(
+                icon: Icon(Icons.hexagon_outlined), // Use appropriate icon
+                text: 'Domains',
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // Movements view
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Add the title
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Upgrade Warm-ups Based on Your Weakest Movement',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                   ),
-                );
-              },
+                  // Wrap GridView.builder in an Expanded widget to fill the remaining space
+                  Expanded(
+                    child: GridView.builder(
+                      itemCount: imageNames.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.0,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: InkWell(
+                            onTap: () {
+                              // Pass the selected movement index to the previous screen
+                              Navigator.pop(context, index);
+                            },
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: Card(
+                                elevation: 8.0,
+                                child: index != 2 // Exclude overheadsquat.jpg (index 2)
+                                    ? ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.grey, // Apply grayscale filter
+                                    BlendMode.saturation,
+                                  ),
+                                  child: Image.asset('images/${imageNames[index]}',
+                                      fit: BoxFit.scaleDown),
+                                )
+                                    : Image.asset('images/${imageNames[index]}',
+                                    fit: BoxFit.scaleDown),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            // Domains view
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Add the title
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Upgrade Warm-ups Based on Your Weak Fitness Domains',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  // Wrap existing widgets in an Expanded widget to fill the remaining space
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Wrap the Image.asset with a Card and ColorFiltered widgets
+                          Card(
+                            elevation: 8.0, // Customize the elevation for the desired effect
+                            child: ColorFiltered(
+                              colorFilter: ColorFilter.mode(
+                                Colors.grey, // Apply grayscale filter
+                                BlendMode.saturation,
+                              ),
+                              child: Image.asset('images/decagon.png'),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          // Call to action button
+                          TextButton(
+                            onPressed: () {
+                              // Add your action here
+                            },
+                            child: Text(
+                              'Accelerate progress for ¥100',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Color(0xFFEA8176),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal: 24.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

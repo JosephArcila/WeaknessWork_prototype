@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_material_symbols: ^0.0.1
+  material_design_icons_flutter: ^5.0.5955
   cupertino_icons: ^0.1.2
 
 dev_dependencies:

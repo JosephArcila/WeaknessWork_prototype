@@ -111,7 +111,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       });
                     }
                   },
-                  child: Text('Movements'),
+                  child: Text('Choose Movement'),
                   style: ElevatedButton.styleFrom(primary: Colors.blue),
                 ),
               ],
@@ -326,10 +326,18 @@ class MovementSelectionPage extends StatelessWidget {
       'medicineballclean.jpg',
     ];
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    double titleFontSize = screenWidth < 350 ? 14.0 : 16.0;
+
     return Scaffold(
       backgroundColor: Colors.grey[500],
       appBar: AppBar(
-        title: Text('Select Your Weakest Movement'),
+        title: Text(
+          'Update Warm-ups: Choose Your Weakest Movement',
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: titleFontSize),
+        ),
       ),
       body: Column(
         children: [

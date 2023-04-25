@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -81,10 +82,10 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       title: 'WeaknessWork',
       home: Builder(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Color(0xFFEA8176),
           appBar: AppBar(
             title: Text('WeaknessWork'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Color(0xFF759E80),
           ),
           body: Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
           bottomNavigationBar: Padding(
@@ -99,7 +100,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   icon: Icon(Icons.info_outline),
                   color: Colors.white,
                 ),
-                ElevatedButton(
+                FloatingActionButton(
                   onPressed: () async {
                     int result = await Navigator.push(
                       context,
@@ -111,8 +112,8 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       });
                     }
                   },
-                  child: Text('Choose Movement'),
-                  style: ElevatedButton.styleFrom(primary: Colors.blue),
+                  child: Icon(MaterialSymbols.conditions),
+                  backgroundColor: Color(0xFF759E80),
                 ),
               ],
             ),
@@ -334,8 +335,9 @@ class MovementSelectionPage extends StatelessWidget {
     double titleFontSize = screenWidth < 350 ? 14.0 : 16.0;
 
     return Scaffold(
-      backgroundColor: Colors.grey[500],
+      backgroundColor: Color(0xFFE8E2CA),
       appBar: AppBar(
+        backgroundColor: Color(0xFF759E80), // Set AppBar background color to #759E80
         title: Text(
           'Update Warm-ups: Choose Your Weakest Movement',
           maxLines: 2,

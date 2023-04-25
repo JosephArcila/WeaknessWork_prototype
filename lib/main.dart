@@ -182,8 +182,12 @@ class _WarmupState extends State<Warmup> {
         spans.add(TextSpan(
             text: '\u2022',
             style: TextStyle(fontWeight: FontWeight.bold, height: 1.5)));
-        spans.add(
-            TextSpan(text: line.substring(1), style: TextStyle(height: 1.5)));
+        spans.add(TextSpan(
+            text: ' ',
+            style: TextStyle(fontSize: 20, letterSpacing: 6.0, height: 1.5)));
+        spans.add(TextSpan(
+            text: line.substring(1),
+            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.white)));
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||
           line.startsWith('(Performed with two dumbbells') ||
@@ -194,8 +198,8 @@ class _WarmupState extends State<Warmup> {
       } else {
         spans.add(TextSpan(
             text: line,
-            style:
-            TextStyle(decoration: TextDecoration.underline, height: 1.5)));
+            style: TextStyle(
+                decoration: TextDecoration.underline, height: 1.5)));
       }
       spans.add(TextSpan(text: '\n'));
     }

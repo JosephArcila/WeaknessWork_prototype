@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
+import 'dart:ui';
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -13,64 +14,72 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
   final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
 
   // Add this getter
-  _WarmupState get _warmupState => _warmupStateKey.currentState;
+  _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   // Method to show the dialog
   void _showDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('General Warm-Ups to Address Weaknesses'),
-          content: SingleChildScrollView(
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: '\u2022',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text:
-                        ' These are warm-ups by modality from the CrossFit Traning Level 2 Guide. Use them to add skill work to your program.\n\n',
-                  ),
-                  TextSpan(
-                    text: '\u2022',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text:
-                        ' Think of them as an opportunity to touch on skills.\n\n',
-                  ),
-                  TextSpan(
-                    text: '\u2022',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text:
-                        ' The warm-ups below are progressive, performed for 2-3 rounds, each getting slightly more complicated.\n\n',
-                  ),
-                  TextSpan(
-                    text: '\u2022',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text:
-                        ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout.',
-                  ),
-                ],
-                style: TextStyle(fontSize: 16.0, color: Colors.black),
+        return Theme(
+          data: ThemeData(
+            dialogBackgroundColor: Color(0xFFE8E2CA),
+          ),
+          child: AlertDialog(
+            title: Text('General Warm-Ups to Address Weaknesses'),
+            content: SingleChildScrollView(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '\u2022',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text:
+                      ' These are warm-ups by modality based on the CrossFit Traning Level 2 Guide. Use them to add skill work to your program\n\n',
+                    ),
+                    TextSpan(
+                      text: '\u2022',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text:
+                      ' Think of them as an opportunity to touch on skills\n\n',
+                    ),
+                    TextSpan(
+                      text: '\u2022',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text:
+                      ' The warm-ups below are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
+                    ),
+                    TextSpan(
+                      text: '\u2022',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text:
+                      ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout',
+                    ),
+                  ],
+                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ),
               ),
             ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Great!'),
+                style: TextButton.styleFrom(
+                  primary: Color(0xFFB84F52), // Set the text color
+                ),
+              ),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Understood'),
-            ),
-          ],
         );
       },
     );
@@ -82,11 +91,30 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       title: 'WeaknessWork',
       home: Builder(
         builder: (context) => Scaffold(
-          backgroundColor: Color(0xFFEA8176),
+          backgroundColor: Color(0xFFE8E2CA),
           appBar: AppBar(
-            title: Text('WeaknessWork'),
+            title: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'W',
+                    style: TextStyle(color: Color(0xFFD2DCEA), fontSize: 20.0),
+                  ),
+                  TextSpan(
+                    text: 'W',
+                    style: TextStyle(color: Color(0xFFB84F52), fontSize: 20.0),
+                  ),
+                  TextSpan(
+                    text: ' WeaknessWork',
+                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                  ),
+                ],
+                style: DefaultTextStyle.of(context).style.copyWith(decoration: TextDecoration.none),
+              ),
+            ),
             backgroundColor: Color(0xFF759E80),
           ),
+
           body: Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -98,7 +126,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     _showDialog(context);
                   },
                   icon: Icon(Icons.info_outline),
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
                 FloatingActionButton(
                   onPressed: () async {
@@ -108,11 +136,14 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     );
                     if (result != null) {
                       setState(() {
-                        _warmupState.selectedMovementIndex = result;
+                        _warmupState?.selectedMovementIndex = result;
                       });
                     }
                   },
-                  child: Icon(MaterialSymbols.conditions),
+                  child: Icon(
+                    MaterialSymbols.conditions,
+                    color: Colors.black, // Change the icon color to black
+                  ),
                   backgroundColor: Color(0xFF759E80),
                 ),
               ],
@@ -127,15 +158,15 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 class Warmup extends StatefulWidget {
   final GlobalKey<_WarmupState> warmupKey;
 
-  Warmup({@required this.warmupKey}) : super(key: warmupKey);
+  Warmup({required this.warmupKey}) : super(key: warmupKey);
 
   @override
   _WarmupState createState() => _WarmupState();
 }
 
 class _WarmupState extends State<Warmup> {
+  int selectedMovementIndex = 0; // Initialize the field with a default value
   int warmupNumber = 0;
-  int selectedMovementIndex;
   final List<String> paragraphs = [
     'Barbell Complex Warm-Up \n' +
         '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
@@ -188,7 +219,7 @@ class _WarmupState extends State<Warmup> {
             style: TextStyle(fontSize: 20, letterSpacing: 6.0, height: 1.5)));
         spans.add(TextSpan(
             text: line.substring(1),
-            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.white)));
+            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black)));
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||
           line.startsWith('(Performed with two dumbbells') ||
@@ -249,44 +280,6 @@ class _WarmupState extends State<Warmup> {
           '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat \n' +
           '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
     }
-    if (selectedMovementIndex == 3) { // index for shoulderpress.jpg
-      paragraphs[0] = 'Barbell Complex Warm-Up for Shoulder Press \n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Strict press (focus on form and control), Thruster \n' +
-          '* Round 2: Deadlift, Hang power snatch, Overhead squat, Push press (increase weight to challenge shoulder strength), Snatch \n' +
-          '* Round 3: Deadlift, Hang power clean and jerk, Front squat to push press (aka "Thruster"), Shoulder press (with pause at the bottom and top of the movement), Behind the neck push press or snatch grip push press (focus on stability and control)';
-      paragraphs[1] = 'Rings Warm-Up for Shoulder Press \n' +
-          '* Tuck to inverted hang, then skin the cat \n' +
-          '* Pike to inverted hang, then skin the cat \n' +
-          '* Strict muscle-up to support to L-sit \n' +
-          '* Shoulder stand back to L-support or straddle support \n' +
-          '* Forward roll back to L-support \n' +
-          '* Forward roll to hang \n' +
-          '* Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
-          '* Front-lever attempt \n' +
-          '* Ring swings \n' +
-          '* Ring dips (focus on full range of motion and controlled movement) \n' +
-          '* Ring push-ups (emphasize control and proper form) \n' +
-          '* Fly-away dismount (skin the cat and let go)';
-      paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Shoulder Press \n' +
-          '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Pike push-up (to target shoulders more effectively) \n' +
-          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Handstand hold against a wall (to build shoulder strength and stability) \n' +
-          '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Inverted shoulder taps (with feet elevated on a box or bench) \n' +
-          '* Round 4: Pose running drill, Shoulder tap push-ups (alternate tapping shoulders after each push-up)';
-      paragraphs[3] = 'Dumbbell Warm-Up for Shoulder Press \n' +
-          '(Performed with two dumbbells at a time) \n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press (focus on shoulder press), Thruster \n' +
-          '(Performed with one dumbbell at a time) \n' +
-          '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up \n' +
-          '* Round 3: Seated single-arm dumbbell shoulder press (alternate arms, focus on strict form), Dumbbell front raise (alternate arms), Dumbbell lateral raise (alternate arms), Dumbbell rear delt fly (bent-over position), Dumbbell upright row';
-      paragraphs[4] = 'Parallettes Warm-Up for Shoulder Press \n' +
-          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-          '* Round 1: Push-up/dive bomber push-up (focus on shoulder engagement), Shoot-through to push-up to frog stand, L-sit pass-through to tuck planche, L-sit pass-through to shoulder stand, Pike push-up \n' +
-          '* Round 2: Handstand hold (focus on shoulder stability and strength), Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand), Handstand shoulder taps (focus on shoulder stability), Handstand push-up, Handstand pirouette walk';
-      paragraphs[5] = 'Kettlebell Warm-Up for Shoulder Press \n' +
-          '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-          '* Round 1: Swing, clean, Clean and press (focus on shoulder engagement), Turkish get-up (partial, up to the hand-supported sitting position), Halo (circular movement around the head) \n' +
-          '* Round 2: Swing, clean, Push press (incorporate a slight dip and drive from the legs to support the shoulder press), snatch, Turkish get-up (full movement)';
-    }
   }
 
 
@@ -306,7 +299,7 @@ class _WarmupState extends State<Warmup> {
             child: RichText(
               text: TextSpan(
                 children: parseText(paragraphs[warmupNumber]),
-                style: TextStyle(fontSize: 20.0, color: Colors.white),
+                style: TextStyle(fontSize: 20.0, color: Colors.black),
               ),
             ),
           ),
@@ -332,7 +325,7 @@ class MovementSelectionPage extends StatelessWidget {
     ];
 
     double screenWidth = MediaQuery.of(context).size.width;
-    double titleFontSize = screenWidth < 350 ? 14.0 : 16.0;
+    double titleFontSize = screenWidth < 350 ? 16.0 : 18.0;
 
     return DefaultTabController(
       length: 2,
@@ -341,22 +334,32 @@ class MovementSelectionPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Color(0xFF759E80),
           title: Text(
-            'Assess and Improve Weaknesses',
+            'Assess Weaknesses',
             maxLines: 2,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: titleFontSize),
+            style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          bottom: TabBar(
-            tabs: [
-              Tab(
-                icon: Icon(Icons.foundation), // Use appropriate icon
-                text: 'Movements',
+          iconTheme: IconThemeData(color: Colors.black), // Add this line
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: Container(
+              color: Color(0xFFB84F52), // Set the background color of the whole TabBar
+              child: TabBar(
+                indicatorColor: Colors.white, // Set the indicator color to white
+                labelColor: Colors.white, // Set the label color to white
+                unselectedLabelColor: Colors.black, // Set the unselected label color to black
+                tabs: [
+                  Tab(
+                    icon: Icon(Icons.foundation),
+                    text: 'Movements',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.hexagon_outlined),
+                    text: 'Domains',
+                  ),
+                ],
               ),
-              Tab(
-                icon: Icon(Icons.hexagon_outlined), // Use appropriate icon
-                text: 'Domains',
-              ),
-            ],
+            ),
           ),
         ),
         body: TabBarView(
@@ -364,116 +367,144 @@ class MovementSelectionPage extends StatelessWidget {
             // Movements view
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Add the title
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      'Upgrade Warm-ups Based on Your Weakest Movement',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  // Wrap GridView.builder in an Expanded widget to fill the remaining space
-                  Expanded(
-                    child: GridView.builder(
-                      itemCount: imageNames.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.0,
-                        mainAxisSpacing: 8.0,
-                        crossAxisSpacing: 8.0,
+              child: SingleChildScrollView( // Add this line
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Add the title
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        'Accelerate progress with tailored warm-ups to improve your weakest movement',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                       ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: InkWell(
-                            onTap: () {
-                              // Pass the selected movement index to the previous screen
-                              Navigator.pop(context, index);
-                            },
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: Card(
-                                elevation: 8.0,
-                                child: index != 2 // Exclude overheadsquat.jpg (index 2)
-                                    ? ColorFiltered(
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.grey, // Apply grayscale filter
-                                    BlendMode.saturation,
+                    ),
+                    // Use a Column for the GridView.builder
+                    Column(
+                      children: [
+                        GridView.builder(
+                          itemCount: imageNames.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 1.0,
+                            mainAxisSpacing: 8.0,
+                            crossAxisSpacing: 8.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            bool disabled = imageNames[index] != 'overheadsquat.jpg';
+
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: InkWell(
+                                onTap: disabled
+                                    ? null
+                                    : () {
+                                  // Pass the selected movement index to the previous screen
+                                  Navigator.pop(context, index);
+                                },
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Card(
+                                    elevation: 10.0,
+                                    child: Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                        ),
+                                        // Add the grey overlay
+                                        if (disabled)
+                                          Container(
+                                            color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                  child: Image.asset('images/${imageNames[index]}',
-                                      fit: BoxFit.scaleDown),
-                                )
-                                    : Image.asset('images/${imageNames[index]}',
-                                    fit: BoxFit.scaleDown),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    // Add a transparent SizedBox for spacing
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    // Add the '¥100' button to the Movements page
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () {
+                            // Add your action here
+                          },
+                          child: Chip(
+                            elevation: 10.0,
+                            label: Text(
+                              '¥100',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
                             ),
+                            backgroundColor: Color(0xFFD2DCEA),
+                            padding: EdgeInsets.all(4.0),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.black, width: 2),
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+
+
             // Domains view
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: ListView(
                 children: [
                   // Add the title
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
-                      'Upgrade Warm-ups Based on Your Weak Fitness Domains',
+                      'Accelerate progress with tailored warm-ups to improve your weak fitness domains',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                     ),
                   ),
-                  // Wrap existing widgets in an Expanded widget to fill the remaining space
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Wrap the Image.asset with a Card and ColorFiltered widgets
-                          Card(
-                            elevation: 8.0, // Customize the elevation for the desired effect
-                            child: ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                Colors.grey, // Apply grayscale filter
-                                BlendMode.saturation,
-                              ),
-                              child: Image.asset('images/decagon.png'),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          // Call to action button
-                          TextButton(
-                            onPressed: () {
-                              // Add your action here
-                            },
-                            child: Text(
-                              'Accelerate progress for ¥100',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFFEA8176),
-                              padding: EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal: 24.0,
-                              ),
-                            ),
-                          ),
-                        ],
+                  Container(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
+                    ),
+                  ),
+                  // Call to action button
+                  InkWell(
+                    onTap: () {
+                      // Add your action here
+                    },
+                    child: Chip(
+                      elevation: 10.0,
+                      label: Text(
+                        '¥100',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      backgroundColor: Color(0xFFD2DCEA),
+                      padding: EdgeInsets.all(4.0),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.black, width: 2),
                       ),
                     ),
                   ),

@@ -18,17 +18,23 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
   // Method to show the dialog
   void _showDialog(BuildContext context) {
+    ScrollController _dialogScrollController = ScrollController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Theme(
-          data: ThemeData(
+            data: ThemeData(
             dialogBackgroundColor: Color(0xFFE8E2CA),
-          ),
-          child: AlertDialog(
-            title: Text('General Warm-Ups to Address Weaknesses'),
-            content: SingleChildScrollView(
-              child: RichText(
+        ),
+        child: AlertDialog(
+        title: Text('General Warm-Ups to Address Weaknesses'),
+        content: Scrollbar(
+        isAlwaysShown: true,
+        controller: _dialogScrollController,
+        child: SingleChildScrollView(
+        controller: _dialogScrollController,
+        child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
@@ -66,9 +72,10 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   ],
                   style: TextStyle(fontSize: 16.0, color: Colors.black),
                 ),
-              ),
-            ),
-            actions: <Widget>[
+        ),
+        ),
+        ),
+          actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -78,8 +85,8 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   primary: Color(0xFFB84F52), // Set the text color
                 ),
               ),
-            ],
-          ),
+          ],
+        ),
         );
       },
     );
@@ -167,7 +174,7 @@ class Warmup extends StatefulWidget {
 class _WarmupState extends State<Warmup> {
   int selectedMovementIndex = 0; // Initialize the field with a default value
   int warmupNumber = 0;
-  final List<String> paragraphs = [
+  final List<String> warmups = [
     'Barbell Complex Warm-Up \n' +
         '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
         '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
@@ -241,10 +248,10 @@ class _WarmupState extends State<Warmup> {
 
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
-      paragraphs[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
+      warmups[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
           '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
           '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
-      paragraphs[1] = 'Rings Warm-Up for Overhead Squat \n' +
+      warmups[1] = 'Rings Warm-Up for Overhead Squat \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
           '* Strict muscle-up to support to L-sit \n' +
@@ -255,16 +262,16 @@ class _WarmupState extends State<Warmup> {
           '* Front-lever attempt \n' +
           '* False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
           '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
-      paragraphs[2] = 'Basic Body Weight (BBW) Warm-Up for Overhead Squat \n' +
+      warmups[2] = 'Basic Body Weight (BBW) Warm-Up for Overhead Squat \n' +
           '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
           '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
           '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
-      paragraphs[3] = 'Dumbbell Warm-Up for Overhead Squat \n' +
+      warmups[3] = 'Dumbbell Warm-Up for Overhead Squat \n' +
           '(Performed with two dumbbells at a time) \n' +
           '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
           '(Performed with one dumbbell at a time) \n' +
           '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up';
-      paragraphs[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
+      warmups[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Push-up/dive bomber push-up \n' +
           '* Shoot-through to push-up to frog stand \n' +
@@ -275,13 +282,13 @@ class _WarmupState extends State<Warmup> {
           '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds) \n' +
           '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability) \n' +
           '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
-      paragraphs[5] = 'Kettlebell Warm-Up for Overhead Squat \n' +
+      warmups[5] = 'Kettlebell Warm-Up for Overhead Squat \n' +
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
           '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat \n' +
           '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
     }
   }
-
+  ScrollController _warmupScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -290,16 +297,23 @@ class _WarmupState extends State<Warmup> {
       child: TextButton(
         onPressed: () {
           setState(() {
-            warmupNumber = (warmupNumber + 1) % paragraphs.length;
+            warmupNumber = (warmupNumber + 1) % warmups.length;
           });
         },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: RichText(
-              text: TextSpan(
-                children: parseText(paragraphs[warmupNumber]),
-                style: TextStyle(fontSize: 20.0, color: Colors.black),
+        child: Scrollbar(
+          // Add these lines to set the isAlwaysShown property and the controller
+          isAlwaysShown: true,
+          controller: _warmupScrollController,
+          child: SingleChildScrollView(
+            // Add this line to set the controller for the SingleChildScrollView
+            controller: _warmupScrollController,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: RichText(
+                text: TextSpan(
+                  children: parseText(warmups[warmupNumber]),
+                  style: TextStyle(fontSize: 20.0, color: Colors.black),
+                ),
               ),
             ),
           ),

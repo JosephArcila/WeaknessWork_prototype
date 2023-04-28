@@ -521,12 +521,13 @@ class MovementSelectionPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                     ),
                   ),
+                  // Add vertical space between title and image
+                  SizedBox(height: 16.0),
                   Container(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
-                    ),
+                    child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
                   ),
+                  // Add vertical space between image and button
+                  SizedBox(height: 24.0),
                   // Call to action button
                   InkWell(
                     onTap: () {

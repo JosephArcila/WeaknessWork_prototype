@@ -19,6 +19,10 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  fonts:
+    - family: Klee One
+      fonts:
+        - asset: fonts/KleeOne-Regular.ttf
 
   uses-material-design: true
 

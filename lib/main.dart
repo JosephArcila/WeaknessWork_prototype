@@ -25,10 +25,14 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       builder: (BuildContext context) {
         return Theme(
             data: ThemeData(
-            dialogBackgroundColor: Color(0xFFE8E2CA),
+              fontFamily: 'Klee One',
+              dialogBackgroundColor: Color(0xFFE8E2CA),
         ),
         child: AlertDialog(
-        title: Text('General Warm-Ups to Address Weaknesses'),
+        title: Text(
+            'General Warm-Ups to Address Weaknesses',
+          style: TextStyle(fontFamily: 'Klee One'),
+        ),
         content: Scrollbar(
         isAlwaysShown: true,
         controller: _dialogScrollController,
@@ -39,7 +43,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   children: [
                     TextSpan(
                       text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
                     ),
                     TextSpan(
                       text:
@@ -47,7 +51,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     TextSpan(
                       text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
                     ),
                     TextSpan(
                       text:
@@ -55,7 +59,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     TextSpan(
                       text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
                     ),
                     TextSpan(
                       text:
@@ -63,14 +67,14 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     TextSpan(
                       text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
                     ),
                     TextSpan(
                       text:
                       ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout',
                     ),
                   ],
-                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                  style: TextStyle(fontSize: 16.0, color: Colors.black, fontFamily: 'Klee One'),
                 ),
         ),
         ),
@@ -96,6 +100,9 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'WeaknessWork',
+      theme: ThemeData(
+          fontFamily: 'Klee One',
+        ),
       home: Builder(
         builder: (context) => Scaffold(
           backgroundColor: Color(0xFFE8E2CA),
@@ -105,15 +112,15 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                 children: [
                   TextSpan(
                     text: 'W',
-                    style: TextStyle(color: Color(0xFFD2DCEA), fontSize: 20.0),
+                    style: TextStyle(color: Color(0xFFD2DCEA), fontSize: 20.0, fontFamily: 'Klee One'),
                   ),
                   TextSpan(
                     text: 'W',
-                    style: TextStyle(color: Color(0xFFB84F52), fontSize: 20.0),
+                    style: TextStyle(color: Color(0xFFB84F52), fontSize: 20.0, fontFamily: 'Klee One'),
                   ),
                   TextSpan(
                     text: ' WeaknessWork',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                    style: TextStyle(color: Colors.black, fontSize: 20.0, fontFamily: 'Klee One'),
                   ),
                 ],
                 style: DefaultTextStyle.of(context).style.copyWith(decoration: TextDecoration.none),
@@ -220,25 +227,25 @@ class _WarmupState extends State<Warmup> {
       if (line.startsWith('*')) {
         spans.add(TextSpan(
             text: '\u2022',
-            style: TextStyle(fontWeight: FontWeight.bold, height: 1.5)));
+            style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, fontFamily: 'Klee One')));
         spans.add(TextSpan(
             text: ' ',
-            style: TextStyle(fontSize: 20, letterSpacing: 6.0, height: 1.5)));
+            style: TextStyle(fontSize: 20, letterSpacing: 6.0, height: 1.5, fontFamily: 'Klee One')));
         spans.add(TextSpan(
             text: line.substring(1),
-            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black)));
+            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black, fontFamily: 'Klee One')));
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||
           line.startsWith('(Performed with two dumbbells') ||
           line.startsWith('(Performed with one dumbbell')) {
         spans.add(TextSpan(
             text: line,
-            style: TextStyle(fontStyle: FontStyle.italic, height: 1.5)));
+            style: TextStyle(fontStyle: FontStyle.italic, height: 1.5, fontFamily: 'Klee One')));
       } else {
         spans.add(TextSpan(
             text: line,
             style: TextStyle(
-                decoration: TextDecoration.underline, height: 1.5)));
+                decoration: TextDecoration.underline, height: 1.5, fontFamily: 'Klee One')));
       }
       spans.add(TextSpan(text: '\n'));
     }

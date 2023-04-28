@@ -338,6 +338,19 @@ class MovementSelectionPage extends StatelessWidget {
       'medicineballclean.jpg',
     ];
 
+    // Add this list of movement names
+    final List<String> movementNames = [
+      'Air Squat',
+      'Front Squat',
+      'Overhead Squat',
+      'Shoulder Press',
+      'Push Press',
+      'Push Jerk',
+      'Deadlift',
+      'SDHP',
+      'Ball Clean',
+    ];
+
     double screenWidth = MediaQuery.of(context).size.width;
     double titleFontSize = screenWidth < 350 ? 16.0 : 18.0;
 
@@ -404,7 +417,7 @@ class MovementSelectionPage extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 1.0,
+                            childAspectRatio: 0.8,
                             mainAxisSpacing: 8.0,
                             crossAxisSpacing: 8.0,
                           ),
@@ -420,24 +433,37 @@ class MovementSelectionPage extends StatelessWidget {
                                   // Pass the selected movement index to the previous screen
                                   Navigator.pop(context, index);
                                 },
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Card(
-                                    elevation: 10.0,
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                child: Column(
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 1,
+                                      child: Card(
+                                        elevation: 10.0,
+                                        child: Stack(
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                            ),
+                                            // Add the grey overlay
+                                            if (disabled)
+                                              Container(
+                                                color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                              ),
+                                          ],
                                         ),
-                                        // Add the grey overlay
-                                        if (disabled)
-                                          Container(
-                                            color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
-                                          ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                    // Add the movement name below the square
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 1.0),
+                                      child: Text(
+                                        movementNames[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
@@ -447,7 +473,7 @@ class MovementSelectionPage extends StatelessWidget {
                     ),
                     // Add a transparent SizedBox for spacing
                     SizedBox(
-                      height: 16.0,
+                      height: 8.0,
                     ),
                     // Add the '¥100' button to the Movements page
                     Padding(

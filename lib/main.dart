@@ -146,7 +146,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   onPressed: () async {
                     int result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MovementSelectionPage()),
+                      MaterialPageRoute(builder: (context) => WeaknessAssessmentPage()),
                     );
                     if (result != null) {
                       setState(() {
@@ -330,7 +330,7 @@ class _WarmupState extends State<Warmup> {
   }
 }
 
-class MovementSelectionPage extends StatelessWidget {
+class WeaknessAssessmentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> imageNames = [
@@ -345,7 +345,6 @@ class MovementSelectionPage extends StatelessWidget {
       'medicineballclean.jpg',
     ];
 
-    // Add this list of movement names
     final List<String> movementNames = [
       'Air Squat',
       'Front Squat',
@@ -401,12 +400,11 @@ class MovementSelectionPage extends StatelessWidget {
             // Movements view
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView( // Add this line
+              child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Add the title
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
@@ -415,7 +413,6 @@ class MovementSelectionPage extends StatelessWidget {
                         style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                       ),
                     ),
-                    // Use a Column for the GridView.builder
                     Column(
                       children: [
                         GridView.builder(
@@ -437,7 +434,6 @@ class MovementSelectionPage extends StatelessWidget {
                                 onTap: disabled
                                     ? null
                                     : () {
-                                  // Pass the selected movement index to the previous screen
                                   Navigator.pop(context, index);
                                 },
                                 child: Column(
@@ -452,16 +448,20 @@ class MovementSelectionPage extends StatelessWidget {
                                               alignment: Alignment.center,
                                               child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
                                             ),
-                                            // Add the grey overlay
                                             if (disabled)
                                               Container(
                                                 color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                              ),
+                                            if (disabled)
+                                              Icon(
+                                                Icons.lock,
+                                                size: 24.0,
+                                                color: Colors.white,
                                               ),
                                           ],
                                         ),
                                       ),
                                     ),
-                                    // Add the movement name below the square
                                     Padding(
                                       padding: const EdgeInsets.only(top: 1.0),
                                       child: Text(
@@ -478,17 +478,14 @@ class MovementSelectionPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // Add a transparent SizedBox for spacing
                     SizedBox(
                       height: 8.0,
                     ),
-                    // Add the '¥100' button to the Movements page
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Center(
                         child: InkWell(
                           onTap: () {
-                            // Add your action here
                           },
                           child: Chip(
                             elevation: 10.0,
@@ -498,6 +495,9 @@ class MovementSelectionPage extends StatelessWidget {
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
+                            ),
+                            avatar: InkWell(
+                              child: Icon(Icons.key),
                             ),
                             backgroundColor: Color(0xFFD2DCEA),
                             padding: EdgeInsets.all(4.0),
@@ -512,8 +512,6 @@ class MovementSelectionPage extends StatelessWidget {
                 ),
               ),
             ),
-
-
             // Domains view
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -528,14 +526,28 @@ class MovementSelectionPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                     ),
                   ),
-                  // Add vertical space between title and image
                   SizedBox(height: 16.0),
-                  Container(
-                    child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
+                  Stack(
+                    children: [
+                      ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                          BlendMode.modulate, // Use BlendMode.modulate instead
+                        ),
+                        child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
+                      ),
+                      Positioned(
+                        top: 4.0,
+                        left: 4.0,
+                        child: Icon(
+                          Icons.lock,
+                          size: 24.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  // Add vertical space between image and button
                   SizedBox(height: 24.0),
-                  // Call to action button
                   InkWell(
                     onTap: () {
                       // Add your action here
@@ -548,6 +560,9 @@ class MovementSelectionPage extends StatelessWidget {
                           fontSize: 16,
                           color: Colors.black,
                         ),
+                      ),
+                      avatar: InkWell(
+                        child: Icon(Icons.key),
                       ),
                       backgroundColor: Color(0xFFD2DCEA),
                       padding: EdgeInsets.all(4.0),

@@ -527,25 +527,27 @@ class WeaknessAssessmentPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  Stack(
-                    children: [
-                      ColorFiltered(
-                        colorFilter: ColorFilter.mode(
-                          Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
-                          BlendMode.modulate, // Use BlendMode.modulate instead
+                  Center(
+                    child: Stack(
+                      children: [
+                        ColorFiltered(
+                          colorFilter: ColorFilter.mode(
+                            Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                            BlendMode.modulate, // Use BlendMode.modulate instead
+                          ),
+                          child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
                         ),
-                        child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
-                      ),
-                      Positioned(
-                        top: 4.0,
-                        left: 4.0,
-                        child: Icon(
-                          Icons.lock,
-                          size: 24.0,
-                          color: Colors.white,
+                        Positioned(
+                          top: 4.0,
+                          left: 4.0,
+                          child: Icon(
+                            Icons.lock,
+                            size: 24.0,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(height: 24.0),
                   InkWell(

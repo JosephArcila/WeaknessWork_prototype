@@ -63,7 +63,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     TextSpan(
                       text:
-                      ' The warm-ups below are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
+                      ' These warm-ups are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
                     ),
                     TextSpan(
                       text: '\u2022',
@@ -101,8 +101,21 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
     return MaterialApp(
       title: 'WeaknessWork',
       theme: ThemeData(
-          fontFamily: 'Klee One',
+        fontFamily: 'Klee One',
+        primaryColor: Color(0xFF759E80),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF759E80),
+          iconTheme: IconThemeData(color: Colors.black),
+          textTheme: TextTheme(
+            headline6: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Klee One', // Add the custom font family here
+            ),
+          ),
         ),
+      ),
       home: Builder(
         builder: (context) => Scaffold(
           backgroundColor: Color(0xFFE8E2CA),
@@ -361,7 +374,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
     double titleFontSize = screenWidth < 350 ? 16.0 : 18.0;
 
     return DefaultTabController(
-      length: 2,
+      length: 3, // Update the length to 3
       child: Scaffold(
         backgroundColor: Color(0xFFE8E2CA),
         appBar: AppBar(
@@ -372,15 +385,15 @@ class WeaknessAssessmentPage extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          iconTheme: IconThemeData(color: Colors.black), // Add this line
+          iconTheme: IconThemeData(color: Colors.black),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
-              color: Color(0xFFB84F52), // Set the background color of the whole TabBar
+              color: Color(0xFFB84F52),
               child: TabBar(
-                indicatorColor: Colors.white, // Set the indicator color to white
-                labelColor: Colors.white, // Set the label color to white
-                unselectedLabelColor: Colors.black, // Set the unselected label color to black
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.black,
                 tabs: [
                   Tab(
                     icon: Icon(Icons.foundation),
@@ -390,6 +403,10 @@ class WeaknessAssessmentPage extends StatelessWidget {
                     icon: Icon(Icons.hexagon_outlined),
                     text: 'Domains',
                   ),
+                  Tab(
+                    icon: Icon(Icons.videocam), // Add the videocam icon
+                    text: 'Correcting', // Add the 'Correcting' tab
+                  ),
                 ],
               ),
             ),
@@ -397,6 +414,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
+
             // Movements view
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -512,6 +530,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                 ),
               ),
             ),
+
             // Domains view
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -576,7 +595,154 @@ class WeaknessAssessmentPage extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Correcting view
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        'Select the movement from which you want to get feedback',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        GridView.builder(
+                          itemCount: imageNames.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 0.8,
+                            mainAxisSpacing: 8.0,
+                            crossAxisSpacing: 8.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            bool disabled = imageNames[index] != 'overheadsquat.jpg';
+
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: InkWell(
+                                onTap: disabled
+                                    ? null
+                                    : () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ExpandedCardScreen(
+                                        imageName: imageNames[index],
+                                        movementName: movementNames[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 1,
+                                      child: Hero(
+                                        tag: imageNames[index],
+                                        child: Card(
+                                          elevation: 10.0,
+                                          child: Stack(
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                              ),
+                                              if (disabled)
+                                                Container(
+                                                  color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                                ),
+                                              if (disabled)
+                                                Icon(
+                                                  Icons.lock,
+                                                  size: 24.0,
+                                                  color: Colors.white,
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 1.0),
+                                      child: Text(
+                                        movementNames[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24.0),
+                    InkWell(
+                      onTap: () {
+                        // Add your action here
+                      },
+                      child: Chip(
+                        elevation: 10.0,
+                        label: Text(
+                          '¥500',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        avatar: InkWell(
+                          child: Icon(Icons.key),
+                        ),
+                        backgroundColor: Color(0xFFD2DCEA),
+                        padding: EdgeInsets.all(4.0),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ExpandedCardScreen extends StatelessWidget {
+  final String imageName;
+  final String movementName;
+
+  ExpandedCardScreen({required this.imageName, required this.movementName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Overhead squat correction',
+          style: TextStyle(color: Colors.black), // Set the text color explicitly
+        ),
+      ),
+      body: Center(
+        child: Hero(
+          tag: imageName,
+          child: Image.asset('images/$imageName', fit: BoxFit.scaleDown),
         ),
       ),
     );

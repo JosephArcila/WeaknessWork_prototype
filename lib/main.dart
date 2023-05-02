@@ -20,81 +20,93 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
   // Add this getter
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
-  // Method to show the dialog
-  void _showDialog(BuildContext context) {
-    ScrollController _dialogScrollController = ScrollController();
+  void _showModalBottomSheet(BuildContext context) {
+    ScrollController _modalScrollController = ScrollController();
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
-            data: ThemeData(
-              fontFamily: 'Klee One',
-              dialogBackgroundColor: Color(0xFFE8E2CA),
-        ),
-        child: AlertDialog(
-        title: Text(
-            'General Warm-Ups to Address Weaknesses',
-          style: TextStyle(fontFamily: 'Klee One'),
-        ),
-        content: Scrollbar(
-        isAlwaysShown: true,
-        controller: _dialogScrollController,
-        child: SingleChildScrollView(
-        controller: _dialogScrollController,
-        child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
-                    ),
-                    TextSpan(
-                      text:
-                      ' These are warm-ups by modality based on the CrossFit Traning Level 2 Guide. Use them to add skill work to your program\n\n',
-                    ),
-                    TextSpan(
-                      text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
-                    ),
-                    TextSpan(
-                      text:
-                      ' Think of them as an opportunity to touch on skills\n\n',
-                    ),
-                    TextSpan(
-                      text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
-                    ),
-                    TextSpan(
-                      text:
-                      ' These warm-ups are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
-                    ),
-                    TextSpan(
-                      text: '\u2022',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klee One'),
-                    ),
-                    TextSpan(
-                      text:
-                      ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout',
-                    ),
-                  ],
-                  style: TextStyle(fontSize: 16.0, color: Colors.black, fontFamily: 'Klee One'),
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Color(0xFFE8E2CA),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+          ),
+          child: SingleChildScrollView(
+            controller: _modalScrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'General Warm-Ups to Address Weaknesses',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Klee One',
+                  ),
                 ),
-        ),
-        ),
-        ),
-          actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Great!'),
-                style: TextButton.styleFrom(
-                  primary: Color(0xFFB84F52), // Set the text color
+                SizedBox(height: 8.0),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '\u2022',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                        ' These are warm-ups by modality based on the CrossFit Traning Level 2 Guide. Use them to add skill work to your program\n\n',
+                      ),
+                      TextSpan(
+                        text: '\u2022',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                        ' Think of them as an opportunity to touch on skills\n\n',
+                      ),
+                      TextSpan(
+                        text: '\u2022',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                        ' These warm-ups are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
+                      ),
+                      TextSpan(
+                        text: '\u2022',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                        ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout',
+                      ),
+                    ],
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                      fontFamily: 'Klee One',
+                    ),
+                  ),
                 ),
-              ),
-          ],
-        ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -154,7 +166,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
               children: [
                 IconButton(
                   onPressed: () {
-                    _showDialog(context);
+                    _showModalBottomSheet(context);
                   },
                   icon: Icon(Icons.info_outline),
                   color: Colors.black,

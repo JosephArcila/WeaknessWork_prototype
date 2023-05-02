@@ -771,6 +771,7 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE8E2CA),
       appBar: AppBar(
         title: Text(
           'Overhead squat correction',

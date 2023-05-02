@@ -779,43 +779,54 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Hero(
-              tag: widget.imageName,
-              child: Image.asset('images/${widget.imageName}', fit: BoxFit.scaleDown),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Color(0xFF759E80), // Set the border color here
+              width: 8.0, // Set the border width here
             ),
-            SizedBox(height: 16.0),
-            InkWell(
-              onTap: () async {
-                await _pickVideo();
-              },
-              child: Chip(
-                elevation: 10.0,
-                label: Text(
-                  'Upload Video',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Hero(
+                  tag: widget.imageName,
+                  child: Image.asset('images/${widget.imageName}', fit: BoxFit.scaleDown),
+                ),
+                SizedBox(height: 16.0),
+                InkWell(
+                  onTap: () async {
+                    await _pickVideo();
+                  },
+                  child: Chip(
+                    elevation: 10.0,
+                    label: Text(
+                      'Upload Video',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    avatar: InkWell(
+                      child: Icon(Icons.file_upload),
+                    ),
+                    backgroundColor: Color(0xFFD2DCEA),
+                    padding: EdgeInsets.all(4.0),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black, width: 2),
+                    ),
                   ),
                 ),
-                avatar: InkWell(
-                  child: Icon(Icons.file_upload),
-                ),
-                backgroundColor: Color(0xFFD2DCEA),
-                padding: EdgeInsets.all(4.0),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 2),
-                ),
-              ),
+                SizedBox(height: 16.0),
+                if (_chewieController != null)
+                  Chewie(
+                    controller: _chewieController!,
+                  ),
+              ],
             ),
-            SizedBox(height: 16.0),
-            if (_chewieController != null)
-              Chewie(
-                controller: _chewieController!,
-              ),
-          ],
+          ),
         ),
       ),
     );

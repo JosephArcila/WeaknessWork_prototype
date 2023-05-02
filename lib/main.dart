@@ -611,7 +611,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
-                        'Select the movement from which you want to get feedback',
+                        'Upload a video to identify and assess movement faults to correct mechanics',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                       ),

@@ -500,9 +500,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Center(
@@ -692,7 +689,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24.0),
                     InkWell(
                       onTap: () {
                         // Add your action here
@@ -789,11 +785,20 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Hero(
-                  tag: widget.imageName,
-                  child: Image.asset('images/${widget.imageName}', fit: BoxFit.scaleDown),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Hero(
+                      tag: widget.imageName,
+                      child: Image.asset(
+                        'images/${widget.imageName}',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16.0),
                 InkWell(

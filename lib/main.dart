@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'dart:ui';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -724,11 +728,45 @@ class WeaknessAssessmentPage extends StatelessWidget {
   }
 }
 
-class ExpandedCardScreen extends StatelessWidget {
+class ExpandedCardScreen extends StatefulWidget {
   final String imageName;
   final String movementName;
 
   ExpandedCardScreen({required this.imageName, required this.movementName});
+
+  @override
+  _ExpandedCardScreenState createState() => _ExpandedCardScreenState();
+}
+
+class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
+
+  Future<void> _pickVideo() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+      allowMultiple: false,
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        _videoPlayerController = VideoPlayerController.file(file);
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController!,
+          autoPlay: true,
+          looping: true,
+        );
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController?.dispose();
+    _chewieController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -736,13 +774,47 @@ class ExpandedCardScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Overhead squat correction',
-          style: TextStyle(color: Colors.black), // Set the text color explicitly
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Center(
-        child: Hero(
-          tag: imageName,
-          child: Image.asset('images/$imageName', fit: BoxFit.scaleDown),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Hero(
+              tag: widget.imageName,
+              child: Image.asset('images/${widget.imageName}', fit: BoxFit.scaleDown),
+            ),
+            SizedBox(height: 16.0),
+            InkWell(
+              onTap: () async {
+                await _pickVideo();
+              },
+              child: Chip(
+                elevation: 10.0,
+                label: Text(
+                  'Upload Video',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                avatar: InkWell(
+                  child: Icon(Icons.file_upload),
+                ),
+                backgroundColor: Color(0xFFD2DCEA),
+                padding: EdgeInsets.all(4.0),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black, width: 2),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            if (_chewieController != null)
+              Chewie(
+                controller: _chewieController!,
+              ),
+          ],
         ),
       ),
     );

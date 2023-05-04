@@ -61,7 +61,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       ),
                       TextSpan(
                         text:
-                        ' These are warm-ups by modality based on the CrossFit Traning Level 2 Guide. Use them to add skill work to your program\n\n',
+                        ' Based on the CrossFit Training Level 2 Guide\n',
                       ),
                       TextSpan(
                         text: '\u2022',
@@ -72,7 +72,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       ),
                       TextSpan(
                         text:
-                        ' Think of them as an opportunity to touch on skills\n\n',
+                        ' Use them to add skill work by modality\n',
                       ),
                       TextSpan(
                         text: '\u2022',
@@ -83,7 +83,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       ),
                       TextSpan(
                         text:
-                        ' These warm-ups are progressive, performed for 2-3 rounds, each getting slightly more complicated\n\n',
+                        ' Performed for 2-3 rounds, each more complicated\n',
                       ),
                       TextSpan(
                         text: '\u2022',
@@ -94,7 +94,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       ),
                       TextSpan(
                         text:
-                        ' Perform each movement for 5-15 repetitions; the repetitions should give enough time to practice without fatiguing for the workout',
+                        ' 5-15 reps per movement',
                       ),
                     ],
                     style: TextStyle(

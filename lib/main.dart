@@ -455,7 +455,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.8,
+                            childAspectRatio: 0.7,
                             mainAxisSpacing: 8.0,
                             crossAxisSpacing: 8.0,
                           ),
@@ -633,7 +633,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.8,
+                            childAspectRatio: 0.7,
                             mainAxisSpacing: 8.0,
                             crossAxisSpacing: 8.0,
                           ),

@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'dart:html' as html;
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -753,22 +756,25 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
   ChewieController? _chewieController;
 
   Future<void> _pickVideo() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.video,
-      allowMultiple: false,
-    );
+    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+    uploadInput.accept = 'video/*';
+    uploadInput.multiple = false;
+    uploadInput.click();
 
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      setState(() {
-        _videoPlayerController = VideoPlayerController.file(file);
-        _chewieController = ChewieController(
-          videoPlayerController: _videoPlayerController!,
-          autoPlay: true,
-          looping: true,
-        );
-      });
-    }
+    uploadInput.onChange.listen((event) {
+      final file = uploadInput.files?.first;
+      if (file != null) {
+        final url = html.Url.createObjectUrl(file);
+        setState(() {
+          _videoPlayerController = VideoPlayerController.network(url);
+          _chewieController = ChewieController(
+            videoPlayerController: _videoPlayerController!,
+            autoPlay: true,
+            looping: true,
+          );
+        });
+      }
+    });
   }
 
   @override
@@ -815,6 +821,16 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
                   ),
                 ),
                 SizedBox(height: 16.0),
+                if (_chewieController != null)
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Chewie(
+                        controller: _chewieController!,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 16.0),
                 InkWell(
                   onTap: () async {
                     await _pickVideo();
@@ -838,11 +854,6 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16.0),
-                if (_chewieController != null)
-                  Chewie(
-                    controller: _chewieController!,
-                  ),
               ],
             ),
           ),

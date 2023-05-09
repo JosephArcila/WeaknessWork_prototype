@@ -288,6 +288,7 @@ class _WarmupState extends State<Warmup> {
           '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
           '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
       warmups[1] = 'Rings Warm-Up for Overhead Squat \n' +
+          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
           '* Strict muscle-up to support to L-sit \n' +
@@ -410,6 +411,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                 indicatorColor: Colors.white,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.black,
+                labelStyle: TextStyle(fontSize: 12.0),
                 tabs: [
                   Tab(
                     icon: Icon(Icons.foundation),

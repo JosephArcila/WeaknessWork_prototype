@@ -297,9 +297,6 @@ class _WarmupState extends State<Warmup> {
             text: '\u2022',
             style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, fontFamily: 'Klee One')));
         spans.add(TextSpan(
-            text: ' ',
-            style: TextStyle(fontSize: 20, letterSpacing: 6.0, height: 1.5, fontFamily: 'Klee One')));
-        spans.add(TextSpan(
             text: line.substring(1),
             style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black, fontFamily: 'Klee One')));
       } else if (line.startsWith('(Can be performed') ||
@@ -312,8 +309,7 @@ class _WarmupState extends State<Warmup> {
       } else {
         spans.add(TextSpan(
             text: line,
-            style: TextStyle(
-                decoration: TextDecoration.underline, height: 1.5, fontFamily: 'Klee One')));
+            style: TextStyle(height: 1.5, fontFamily: 'Klee One')));
       }
       spans.add(TextSpan(text: '\n'));
     }

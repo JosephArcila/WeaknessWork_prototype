@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'dart:ui';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import 'dart:html' as html;
 
 void main() => runApp(WeaknessWorkApp());
@@ -284,10 +280,10 @@ class _WarmupState extends State<Warmup> {
     return spans;
   }
 
-
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
-      warmups[0] = 'Barbell Complex Warm-Up for Overhead Squat \n' +
+      warmups[0] =
+          'Barbell Complex Warm-Up for Overhead Squat \n' +
           '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
           '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
       warmups[1] = 'Rings Warm-Up for Overhead Squat \n' +

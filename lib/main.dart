@@ -210,42 +210,82 @@ class _WarmupState extends State<Warmup> {
   int selectedMovementIndex = 0; // Initialize the field with a default value
   int warmupNumber = 0;
   final List<String> warmups = [
-    'Barbell Complex Warm-Up \n' +
-        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
-    'Rings \n' +
-        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-        '* Tuck to inverted hang, then skin the cat \n' +
-        '* Pike to inverted hang, then skin the cat \n' +
-        '* Strict muscle-up to support to L-sit \n' +
-        '* Shoulder stand back to L-support or straddle support \n' +
-        '* Forward roll back to L-support \n' +
-        '* Forward roll to hang \n' +
-        '*  Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
-        '* Front-lever attempt \n' +
-        '* Ring swings \n' +
+    'Barbell Complex Warm-Up\n' +
+        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
+        'Deadlift,\n' +
+        'Hang power clean,\n' +
+        'Front squat,\n' +
+        'Press,\n' +
+        'Thruster\n' +
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch\n' +
+        'Deadlift,\n' +
+        'Hang power snatch,\n' +
+        'Overhead squat,\n' +
+        'Snatch',
+    'Rings Complex Warm-Up\n' +
+        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
+        '* Tuck to inverted hang, then skin the cat\n' +
+        '* Pike to inverted hang, then skin the cat\n' +
+        '* Strict muscle-up to support to L-sit\n' +
+        '* Shoulder stand back to L-support or straddle support\n' +
+        '* Forward roll back to L-support\n' +
+        '* Forward roll to hang\n' +
+        '*  Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang\n' +
+        '* Front-lever attempt\n' +
+        '* Ring swings\n' +
         '* Fly-away dismount (skin the cat and let go)',
-    'Basic Body Weight (BBW) \n' +
-        '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension \n' +
-        '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension \n' +
-        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension \n' +
-        '* Round 4: Pose running drill',
-    'Dumbbell \n' +
-        '(Performed with two dumbbells at a time) \n' +
-        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster \n' +
-        '(Performed with one dumbbell at a time) \n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up',
-    'Parallettes \n' +
-        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-        '* Push-up/dive bomber push-up \n' +
-        '* Shoot-through to push-up to frog stand \n' +
-        '* L-sit pass-through to tuck planche \n' +
-        '* L-sit pass-through to shoulder stand \n' +
-        '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
+    'Basic Body Weight (BBW) Complex Warm-Up\n' +
+        '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension\n' +
+        'Squat,\n' +
+        'Push-up,\n' +
+        'Sit-up,\n' +
+        'Pull-up (strict),\n' +
+        'Hip extension\n' +
+        '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension\n' +
+        'Lunge,\n' +
+        'Dip (strict),\n' +
+        'V-up,\n' +
+        'Kipping pull-up,\n' +
+        'Back extension\n' +
+        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension\n' +
+        'Pistol,\n' +
+        'Handstand push-up,\n' +
+        'Toes-to-bar (straight leg and strict),\n' +
+        'Muscle-up (strict),\n' +
+        'Hip and back extension\n' +
+        '* Round 4: Pose running drill\n' +
+        'Pose running drill',
+    'Dumbbell Complex Warm-Up\n' +
+        '(Performed with two dumbbells at a time)\n' +
+        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
+        'Deadlift,\n' +
+        'Hang power clean,\n' +
+        'Front squat,\n' +
+        'Press,\n' +
+        'Thruster\n' +
+        '(Performed with one dumbbell at a time)\n' +
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up\n' +
+        'Deadlift,\n' +
+        'Hang power snatch,\n' +
+        'Overhead squat,\n' +
+        'Snatch,\n' +
+        'Turkish get-up',
+    'Parallettes Complex Warm-Up\n' +
+        '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
+        '* Push-up/dive bomber push-up\n' +
+        '* Shoot-through to push-up to frog stand\n' +
+        '* L-sit pass-through to tuck planche\n' +
+        '* L-sit pass-through to shoulder stand\n' +
+        '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
         '* Handstand pirouette walk',
-    'Kettlebell \n' +
-        '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-        '* Swing, Clean, Clean and press, Snatch, Turkish get-up \n'
+    'Kettlebell Complex Warm-Up\n' +
+        '(Can be performed with one or both kettlebells or with hand-to-hand techniques)\n' +
+        '* Swing, Clean, Clean and press, Snatch, Turkish get-up\n'
+        'Swing,\n' +
+        'Clean,\n' +
+        'Clean and press,\n' +
+        'Snatch,\n' +
+        'Turkish get-up\n'
   ];
 
   List<InlineSpan> parseText(String text) {

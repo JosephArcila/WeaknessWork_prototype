@@ -319,10 +319,20 @@ class _WarmupState extends State<Warmup> {
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
       warmups[0] =
-          'Barbell Complex Warm-Up for Overhead Squat \n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
-          '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
-      warmups[1] = 'Rings Warm-Up for Overhead Squat \n' +
+          'Barbell Complex Warm-Up for Overhead Squat\n' +
+              '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n' +
+              'Deadlift,\n' +
+              'Hang power clean,\n' +
+              'Front squat,\n' +
+              'Press,\n' +
+              'Overhead squat\n' +
+              '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance\n' +
+              'Deadlift,\n' +
+              'Hang power snatch,\n' +
+              'Overhead squat (with pause),\n' +
+              'Sots press,\n' +
+              'Snatch balance';
+      warmups[1] = 'Rings Complex Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
           '* Pike to inverted hang, then skin the cat \n' +
@@ -334,16 +344,26 @@ class _WarmupState extends State<Warmup> {
           '* Front-lever attempt \n' +
           '* False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
           '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
-      warmups[2] = 'Basic Body Weight (BBW) Warm-Up for Overhead Squat \n' +
+      warmups[2] = 'Basic Body Weight (BBW) Complex Warm-Up for Overhead Squat\n' +
           '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
           '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
           '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
-      warmups[3] = 'Dumbbell Warm-Up for Overhead Squat \n' +
-          '(Performed with two dumbbells at a time) \n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat \n' +
-          '(Performed with one dumbbell at a time) \n' +
-          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up';
-      warmups[4] = 'Parallettes Warm-Up for Overhead Squat \n' +
+      warmups[3] = 'Dumbbell Complex Warm-Up for Overhead Squat\n' +
+          '(Performed with two dumbbells at a time)\n' +
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n' +
+          'Deadlift,\n' +
+          'Hang power clean,\n' +
+          'Front squat,\n' +
+          'Press,\n' +
+          'Overhead squat\n' +
+          '(Performed with one dumbbell at a time)\n' +
+          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up\n' +
+          'Deadlift\n' +
+          'Hang power snatch,\n' +
+          'Single-arm overhead squat,\n' +
+          'Snatch,\n' +
+          'Turkish get-up';
+      warmups[4] = 'Parallettes Complex Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Push-up/dive bomber push-up \n' +
           '* Shoot-through to push-up to frog stand \n' +
@@ -354,7 +374,7 @@ class _WarmupState extends State<Warmup> {
           '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds) \n' +
           '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability) \n' +
           '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
-      warmups[5] = 'Kettlebell Warm-Up for Overhead Squat \n' +
+      warmups[5] = 'Kettlebell Complex Warm-Up for Overhead Squat \n' +
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
           '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat \n' +
           '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';

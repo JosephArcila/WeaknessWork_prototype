@@ -212,16 +212,7 @@ class _WarmupState extends State<Warmup> {
   final List<String> warmups = [
     'Barbell Complex Warm-Up\n' +
         '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
-        'Deadlift,\n' +
-        'Hang power clean,\n' +
-        'Front squat,\n' +
-        'Press,\n' +
-        'Thruster\n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch\n' +
-        'Deadlift,\n' +
-        'Hang power snatch,\n' +
-        'Overhead squat,\n' +
-        'Snatch',
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
     'Rings Complex Warm-Up\n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
         '* Tuck to inverted hang, then skin the cat\n' +
@@ -236,40 +227,13 @@ class _WarmupState extends State<Warmup> {
         '* Fly-away dismount (skin the cat and let go)',
     'Basic Body Weight (BBW) Complex Warm-Up\n' +
         '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension\n' +
-        'Squat,\n' +
-        'Push-up,\n' +
-        'Sit-up,\n' +
-        'Pull-up (strict),\n' +
-        'Hip extension\n' +
-        '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension\n' +
-        'Lunge,\n' +
-        'Dip (strict),\n' +
-        'V-up,\n' +
-        'Kipping pull-up,\n' +
-        'Back extension\n' +
-        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension\n' +
-        'Pistol,\n' +
-        'Handstand push-up,\n' +
-        'Toes-to-bar (straight leg and strict),\n' +
-        'Muscle-up (strict),\n' +
-        'Hip and back extension\n' +
-        '* Round 4: Pose running drill\n' +
-        'Pose running drill',
+        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension\n'
+            '* Round 4: Pose running drill',
     'Dumbbell Complex Warm-Up\n' +
         '(Performed with two dumbbells at a time)\n' +
         '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
-        'Deadlift,\n' +
-        'Hang power clean,\n' +
-        'Front squat,\n' +
-        'Press,\n' +
-        'Thruster\n' +
         '(Performed with one dumbbell at a time)\n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up\n' +
-        'Deadlift,\n' +
-        'Hang power snatch,\n' +
-        'Overhead squat,\n' +
-        'Snatch,\n' +
-        'Turkish get-up',
+        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up',
     'Parallettes Complex Warm-Up\n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
         '* Push-up/dive bomber push-up\n' +
@@ -280,12 +244,7 @@ class _WarmupState extends State<Warmup> {
         '* Handstand pirouette walk',
     'Kettlebell Complex Warm-Up\n' +
         '(Can be performed with one or both kettlebells or with hand-to-hand techniques)\n' +
-        '* Swing, Clean, Clean and press, Snatch, Turkish get-up\n'
-        'Swing,\n' +
-        'Clean,\n' +
-        'Clean and press,\n' +
-        'Snatch,\n' +
-        'Turkish get-up\n'
+        '* Swing, Clean, Clean and press, Snatch, Turkish get-up'
   ];
 
   List<InlineSpan> parseText(String text) {
@@ -320,18 +279,8 @@ class _WarmupState extends State<Warmup> {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
       warmups[0] =
           'Barbell Complex Warm-Up for Overhead Squat\n' +
-              '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n' +
-              'Deadlift,\n' +
-              'Hang power clean,\n' +
-              'Front squat,\n' +
-              'Press,\n' +
-              'Overhead squat\n' +
-              '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance\n' +
-              'Deadlift,\n' +
-              'Hang power snatch,\n' +
-              'Overhead squat (with pause),\n' +
-              'Sots press,\n' +
-              'Snatch balance';
+              '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n'
+                  '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
       warmups[1] = 'Rings Complex Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
@@ -346,40 +295,31 @@ class _WarmupState extends State<Warmup> {
           '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
       warmups[2] = 'Basic Body Weight (BBW) Complex Warm-Up for Overhead Squat\n' +
           '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
-          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control) \n' +
+          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control)\n' +
           '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
       warmups[3] = 'Dumbbell Complex Warm-Up for Overhead Squat\n' +
           '(Performed with two dumbbells at a time)\n' +
           '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n' +
-          'Deadlift,\n' +
-          'Hang power clean,\n' +
-          'Front squat,\n' +
-          'Press,\n' +
-          'Overhead squat\n' +
           '(Performed with one dumbbell at a time)\n' +
-          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up\n' +
-          'Deadlift\n' +
-          'Hang power snatch,\n' +
-          'Single-arm overhead squat,\n' +
-          'Snatch,\n' +
-          'Turkish get-up';
-      warmups[4] = 'Parallettes Complex Warm-Up for Overhead Squat \n' +
-          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-          '* Push-up/dive bomber push-up \n' +
-          '* Shoot-through to push-up to frog stand \n' +
-          '* L-sit pass-through to tuck planche \n' +
-          '* L-sit pass-through to shoulder stand \n' +
-          '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand) \n' +
-          '* Handstand pirouette walk \n' +
-          '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds) \n' +
-          '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability) \n' +
+          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up';
+      warmups[4] = 'Parallettes Complex Warm-Up for Overhead Squat\n' +
+          '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
+          '* Push-up/dive bomber push-up\n' +
+          '* Shoot-through to push-up to frog stand\n' +
+          '* L-sit pass-through to tuck planche\n' +
+          '* L-sit pass-through to shoulder stand\n' +
+          '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
+          '* Handstand pirouette walk\n' +
+          '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds)\n' +
+          '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability)\n' +
           '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
-      warmups[5] = 'Kettlebell Complex Warm-Up for Overhead Squat \n' +
-          '(Can be performed with one or both kettlebells or with hand-to-hand techniques) \n' +
-          '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat \n' +
+      warmups[5] = 'Kettlebell Complex Warm-Up for Overhead Squat\n' +
+          '(Can be performed with one or both kettlebells or with hand-to-hand techniques)\n' +
+          '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat\n' +
           '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
     }
   }
+
   ScrollController _warmupScrollController = ScrollController();
 
   @override

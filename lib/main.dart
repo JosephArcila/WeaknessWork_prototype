@@ -247,6 +247,20 @@ class _WarmupState extends State<Warmup> {
         '* Swing, Clean, Clean and press, Snatch, Turkish get-up'
   ];
 
+  Widget displayImages() {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8.0,
+      children: [
+        Image.asset('images/deadlift.gif'),
+        Image.asset('images/hangpowerclean.gif'),
+        Image.asset('images/frontsquat.gif'),
+        Image.asset('images/press.gif'),
+        Image.asset('images/overheadsquat.gif'),
+      ],
+    );
+  }
+
   List<InlineSpan> parseText(String text) {
     List<String> lines = text.split('\n');
     List<InlineSpan> spans = [];
@@ -255,9 +269,48 @@ class _WarmupState extends State<Warmup> {
         spans.add(TextSpan(
             text: '\u2022',
             style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, fontFamily: 'Klee One')));
+
+        // Check for the identifiers and remove them from the line
+        bool displayDumbbellImages = line.contains('[ID:DB_IMAGES]');
+        bool displayBarbellImages = line.contains('[ID:BB_IMAGES]');
+        bool displayDumbbell2Images = line.contains('[ID:DB_IMAGES_2]');
+        bool displayBarbell2Images = line.contains('[ID:BB_IMAGES_2]');
+        line = line.replaceAll('[ID:DB_IMAGES]', '').replaceAll('[ID:BB_IMAGES]', '');
+        line = line.replaceAll('[ID:DB_IMAGES_2]', '').replaceAll('[ID:BB_IMAGES_2]', '');
+
         spans.add(TextSpan(
             text: line.substring(1),
             style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black, fontFamily: 'Klee One')));
+
+        if (displayDumbbellImages) {
+          spans.add(TextSpan(text: '\n'));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowerclean.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellfrontsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellpress.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.gif', height: 100)));
+        } else if (displayBarbellImages) {
+          spans.add(TextSpan(text: '\n'));
+          spans.add(WidgetSpan(child: Image.asset('images/deadlift.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/hangpowerclean.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/frontsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/press.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.gif', height: 100)));
+        } else if (displayBarbell2Images) {
+          spans.add(TextSpan(text: '\n'));
+          spans.add(WidgetSpan(child: Image.asset('images/deadlift.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/hangpowersnatch.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/sotspress.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/snatchbalance.gif', height: 100)));
+        } else if (displayDumbbell2Images) {
+          spans.add(TextSpan(text: '\n'));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowersnatch.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellsnatch.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellturkishgetup.gif', height: 100)));
+        }
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||
           line.startsWith('(Performed with two dumbbells') ||
@@ -277,10 +330,9 @@ class _WarmupState extends State<Warmup> {
 
   void updateParagraphs() {
     if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
-      warmups[0] =
-          'Barbell Complex Warm-Up for Overhead Squat\n' +
-              '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n'
-                  '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance';
+      warmups[0] = 'Barbell Complex Warm-Up for Overhead Squat\n' +
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:BB_IMAGES]\n' +
+          '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance[ID:BB_IMAGES_2]';
       warmups[1] = 'Rings Complex Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
           '* Tuck to inverted hang, then skin the cat \n' +
@@ -299,9 +351,9 @@ class _WarmupState extends State<Warmup> {
           '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
       warmups[3] = 'Dumbbell Complex Warm-Up for Overhead Squat\n' +
           '(Performed with two dumbbells at a time)\n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat\n' +
+          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:DB_IMAGES]\n' +
           '(Performed with one dumbbell at a time)\n' +
-          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up';
+          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up[ID:DB_IMAGES_2]';
       warmups[4] = 'Parallettes Complex Warm-Up for Overhead Squat\n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
           '* Push-up/dive bomber push-up\n' +

@@ -252,11 +252,11 @@ class _WarmupState extends State<Warmup> {
       alignment: WrapAlignment.center,
       spacing: 8.0,
       children: [
-        Image.asset('images/deadlift.gif'),
-        Image.asset('images/hangpowerclean.gif'),
-        Image.asset('images/frontsquat.gif'),
-        Image.asset('images/press.gif'),
-        Image.asset('images/overheadsquat.gif'),
+        Image.asset('images/deadlift.jpg'),
+        Image.asset('images/hangpowerclean.jpg'),
+        Image.asset('images/frontsquat.jpg'),
+        Image.asset('images/press.jpg'),
+        Image.asset('images/overheadsquat.jpg'),
       ],
     );
   }
@@ -284,32 +284,32 @@ class _WarmupState extends State<Warmup> {
 
         if (displayDumbbellImages) {
           spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowerclean.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellfrontsquat.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellpress.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowerclean.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellfrontsquat.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellpress.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.jpg', height: 100)));
         } else if (displayBarbellImages) {
           spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/deadlift.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/hangpowerclean.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/frontsquat.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/press.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/deadlift.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/hangpowerclean.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/frontsquat.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/shoulderpress.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.jpg', height: 100)));
         } else if (displayBarbell2Images) {
           spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/deadlift.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/hangpowersnatch.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/sotspress.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/snatchbalance.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/deadlift.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/hangpowersnatch.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/sotspress.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/snatchbalance.jpg', height: 100)));
         } else if (displayDumbbell2Images) {
           spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowersnatch.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellsnatch.gif', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellturkishgetup.gif', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowersnatch.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellsnatch.jpg', height: 100)));
+          spans.add(WidgetSpan(child: Image.asset('images/dumbbellturkishgetup.jpg', height: 100)));
         }
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||

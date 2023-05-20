@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  speech_to_text: ^5.0.0
+  carousel_slider: ^4.0.0
   html: ^0.15.0
   flutter_material_symbols: ^0.0.1
   material_design_icons_flutter: ^5.0.6996

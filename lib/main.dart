@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:html' as html;
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -13,10 +15,38 @@ class WeaknessWorkApp extends StatefulWidget {
 }
 
 class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
-  // Create a global key for the _WarmupState
+
+  stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            // Process the recognized speech here
+            print('onResult: ${val.recognizedWords}');
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+  }
+
   final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
 
-  // Add this getter
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   void _showModalBottomSheet(BuildContext context) {
@@ -125,7 +155,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
             headline6: TextStyle(
               color: Colors.black,
               fontSize: 20,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
               fontFamily: 'Klee One', // Add the custom font family here
             ),
           ),
@@ -170,7 +200,28 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   icon: Icon(Icons.info_outline),
                   color: Colors.black,
                 ),
-                FloatingActionButton(
+                FloatingActionButton.extended(
+                  icon: Icon(
+                    _isListening ? Icons.mic : Icons.mic_none,
+                    color: Colors.black,
+                  ),
+                  label: Text(
+                    _isListening ? 'Stop' : 'Log',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  backgroundColor: Color(0xFFEA8176),
+                  onPressed: _listen,
+                  heroTag: "micButton",
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(1.0),
+                    side: BorderSide(color: Colors.black, width: 2.0),
+                  ),
+                ),
+                FloatingActionButton.small(
+                  heroTag: "weaknessAssessmentButton", // Add unique tag here
                   onPressed: () async {
                     int result = await Navigator.push(
                       context,
@@ -184,9 +235,13 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   },
                   child: Icon(
                     MaterialSymbols.conditions,
-                    color: Colors.black, // Change the icon color to black
+                    color: Colors.black,
                   ),
-                  backgroundColor: Color(0xFF759E80),
+                  backgroundColor: Color(0xFFD2DCEA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(1.0),
+                    side: BorderSide(color: Colors.black, width: 2.0),
+                  ),
                 ),
               ],
             ),
@@ -283,33 +338,105 @@ class _WarmupState extends State<Warmup> {
             style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black, fontFamily: 'Klee One')));
 
         if (displayDumbbellImages) {
-          spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowerclean.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellfrontsquat.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellpress.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.jpg', height: 100)));
+          List<String> imageList = [
+            'images/dumbbelldeadlift.jpg',
+            'images/dumbbellhangpowerclean.jpg',
+            'images/dumbbellfrontsquat.jpg',
+            'images/dumbbellpress.jpg',
+            'images/dumbbelloverheadsquat.jpg',
+          ];
+          spans.add(WidgetSpan(child: CarouselSlider(
+            options: CarouselOptions(
+              height: 100.0,
+              enableInfiniteScroll: false,
+            ),
+            items: imageList.map((imageAsset) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Image.asset(imageAsset),
+                  );
+                },
+              );
+            }).toList(),
+          )));
         } else if (displayBarbellImages) {
-          spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/deadlift.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/hangpowerclean.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/frontsquat.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/shoulderpress.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.jpg', height: 100)));
+          List<String> imageList = [
+            'images/deadlift.jpg',
+            'images/hangpowerclean.jpg',
+            'images/frontsquat.jpg',
+            'images/shoulderpress.jpg',
+            'images/overheadsquat.jpg',
+          ];
+          spans.add(WidgetSpan(child: CarouselSlider(
+            options: CarouselOptions(
+              height: 100.0,
+              enableInfiniteScroll: false,
+            ),
+            items: imageList.map((imageAsset) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Image.asset(imageAsset),
+                  );
+                },
+              );
+            }).toList(),
+          )));
         } else if (displayBarbell2Images) {
-          spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/deadlift.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/hangpowersnatch.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/overheadsquat.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/sotspress.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/snatchbalance.jpg', height: 100)));
+          List<String> imageList = [
+            'images/deadlift.jpg',
+            'images/hangpowersnatch.jpg',
+            'images/overheadsquat.jpg',
+            'images/sotspress.jpg',
+            'images/snatchbalance.jpg',
+          ];
+          spans.add(WidgetSpan(child: CarouselSlider(
+            options: CarouselOptions(
+              height: 100.0,
+              enableInfiniteScroll: false,
+            ),
+            items: imageList.map((imageAsset) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Image.asset(imageAsset),
+                  );
+                },
+              );
+            }).toList(),
+          )));
         } else if (displayDumbbell2Images) {
-          spans.add(TextSpan(text: '\n'));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelldeadlift.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellhangpowersnatch.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbelloverheadsquat.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellsnatch.jpg', height: 100)));
-          spans.add(WidgetSpan(child: Image.asset('images/dumbbellturkishgetup.jpg', height: 100)));
+          List<String> imageList = [
+            'images/dumbbelldeadlift.jpg',
+            'images/dumbbellhangpowersnatch.jpg',
+            'images/dumbbelloverheadsquat.jpg',
+            'images/dumbbellsnatch.jpg',
+            'images/dumbbellturkishgetup.jpg',
+          ];
+          spans.add(WidgetSpan(child: CarouselSlider(
+            options: CarouselOptions(
+              height: 100.0,
+              enableInfiniteScroll: false,
+            ),
+            items: imageList.map((imageAsset) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Image.asset(imageAsset),
+                  );
+                },
+              );
+            }).toList(),
+          )));
         }
       } else if (line.startsWith('(Can be performed') ||
           line.startsWith('(Create a mini routine') ||
@@ -493,7 +620,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       child: Text(
                         'Accelerate progress with tailored warm-ups to improve your weakest movement',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -550,7 +677,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                       child: Text(
                                         movementNames[index],
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400),
+                                        style: TextStyle(fontSize: 12.0),
                                       ),
                                     ),
                                   ],
@@ -604,7 +731,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                     child: Text(
                       'Accelerate progress with tailored warm-ups to improve your weak fitness domains',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(height: 16.0),
@@ -671,7 +798,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       child: Text(
                         'Upload a video to identify and assess movement faults to correct mechanics',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -739,7 +866,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                       child: Text(
                                         movementNames[index],
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400),
+                                        style: TextStyle(fontSize: 12.0),
                                       ),
                                     ),
                                   ],

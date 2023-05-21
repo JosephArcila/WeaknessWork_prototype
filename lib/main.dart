@@ -6,6 +6,7 @@ import 'package:chewie/chewie.dart';
 import 'dart:html' as html;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -14,7 +15,38 @@ class WeaknessWorkApp extends StatefulWidget {
   _WeaknessWorkAppState createState() => _WeaknessWorkAppState();
 }
 
+class SpeechBubble extends StatelessWidget {
+  final String text;
+
+  SpeechBubble({Key? key, required this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Color(0xFFF4F1E6),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 16.0),
+      ),
+    );
+  }
+}
+
 class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
+
+  List<String> _transcriptions = [];
+
+  void _saveTranscription() {
+    setState(() {
+      _transcriptions.add(_currentTranscription);
+      _currentTranscription = '';
+      _recognizedWords = '';
+    });
+  }
 
   stt.SpeechToText _speech = stt.SpeechToText();
   bool _isListening = false;
@@ -23,6 +55,9 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
   void initState() {
     super.initState();
   }
+
+  String _recognizedWords = '';
+  String _currentTranscription = '';
 
   void _listen() async {
     if (!_isListening) {
@@ -34,14 +69,17 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
         setState(() => _isListening = true);
         _speech.listen(
           onResult: (val) => setState(() {
-            // Process the recognized speech here
+            _recognizedWords = val.recognizedWords;
             print('onResult: ${val.recognizedWords}');
+            _currentTranscription = val.recognizedWords;
           }),
         );
       }
     } else {
-      setState(() => _isListening = false);
-      _speech.stop();
+      setState(() {
+        _isListening = false;
+        _speech.stop();
+      });
     }
   }
 
@@ -141,6 +179,152 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
     );
   }
 
+  void _showLogsModalBottomSheet(BuildContext context) {
+    ScrollController _modalScrollController = ScrollController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Add this line
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.9, // Change this to whatever height you want
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color(0xFFE8E2CA),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              controller: _modalScrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.pop(context); // Close the 'Logs' modal
+                          _showRecordingModalBottomSheet(context); // Open the 'RecordingModalBottomSheet' modal
+                        },
+                      ),
+                      Text(
+                        'Logs',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      SizedBox(width: 48.0), // Provide a sizebox to balance the row
+                    ],
+                  ),
+                  ..._transcriptions.map((transcription) => SpeechBubble(text: transcription)).toList(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showRecordingModalBottomSheet(BuildContext context) {
+    ScrollController _modalScrollController = ScrollController();
+    String currentDate = DateFormat('yyMMdd').format(DateTime.now());
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Color(0xFFE8E2CA),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+          ),
+          child: SingleChildScrollView(
+            controller: _modalScrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row( // Change to Row widget
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.history),
+                      onPressed: () {
+                        Navigator.pop(context); // Close the 'RecordingModalBottomSheet' modal
+                        _showLogsModalBottomSheet(context); // Open the 'Logs' modal
+                      },
+                    ),
+                    Text(
+                      'Log $currentDate',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Klee One',
+                      ),
+                    ),
+                    SizedBox(width: 48.0), // Provide a sizebox to balance the row
+                  ],
+                ),
+                SizedBox(height: 8.0),
+                SpeechBubble(
+                  text: _recognizedWords,
+                ),
+                SizedBox(height: 16.0),
+                SizedBox(
+                  height: 56, // size of the FloatingActionButton
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: FloatingActionButton.small(
+                          onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
+                          child: Icon(
+                            Icons.note_add,
+                            color: Colors.black,
+                          ),
+                          backgroundColor: Color(0xFFD2DCEA),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                            side: BorderSide(color: Colors.black, width: 2.0),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: FloatingActionButton(
+                          onPressed: _listen,
+                          child: Icon(
+                            _isListening ? Icons.pause : Icons.mic,
+                            color: Colors.black,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                            side: BorderSide(color: Colors.black, width: 2.0),
+                          ),
+                          backgroundColor: Color(0xFFEA8176),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -202,18 +386,19 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                 ),
                 FloatingActionButton.extended(
                   icon: Icon(
-                    _isListening ? Icons.mic : Icons.mic_none,
+                    Icons.score,
                     color: Colors.black,
                   ),
-                  label: Text(
-                    _isListening ? 'Stop' : 'Log',
+                  label: Text('Log',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold
                     ),
                   ),
                   backgroundColor: Color(0xFFEA8176),
-                  onPressed: _listen,
+                  onPressed: () {
+                    _showRecordingModalBottomSheet(context);
+                  },
                   heroTag: "micButton",
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(1.0),

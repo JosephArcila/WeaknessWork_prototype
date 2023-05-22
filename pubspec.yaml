@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  speech_to_text: ^5.0.0
+  speech_to_text: ^5.4.2
+  provider: ^6.0.1
   intl: ^0.17.0
   carousel_slider: ^4.0.0
   html: ^0.15.0
@@ -23,9 +24,22 @@ dependencies:
   path: ^1.8.2
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "images/wwicon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "images/wwicon.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
 
 flutter:
   fonts:

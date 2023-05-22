@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
-import 'dart:ui';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:html' as html;
@@ -70,7 +69,6 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
         _speech.listen(
           onResult: (val) => setState(() {
             _recognizedWords = val.recognizedWords;
-            print('onResult: ${val.recognizedWords}');
             _currentTranscription = val.recognizedWords;
           }),
         );
@@ -223,7 +221,19 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       SizedBox(width: 48.0), // Provide a sizebox to balance the row
                     ],
                   ),
-                  ..._transcriptions.map((transcription) => SpeechBubble(text: transcription)).toList(),
+                  ..._transcriptions.map((transcription) => Card(
+                    color: Color(0xFFF4F1E6),
+                    shape: RoundedRectangleBorder(  // Set the card shape
+                      borderRadius: BorderRadius.circular(0),  // Squared card
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        transcription,
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                  )
+                  ).toList(),
                 ],
               ),
             ),
@@ -276,8 +286,17 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   ],
                 ),
                 SizedBox(height: 8.0),
-                SpeechBubble(
-                  text: _recognizedWords,
+                Card(
+                  color: Color(0xFFF4F1E6),
+                  shape: RoundedRectangleBorder(  // Set the card shape
+                    borderRadius: BorderRadius.circular(0),  // Squared card
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      _recognizedWords,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16.0),
                 SizedBox(
@@ -335,17 +354,21 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
         appBarTheme: AppBarTheme(
           backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
-          textTheme: TextTheme(
-            headline6: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Klee One', // Add the custom font family here
-            ),
+          toolbarTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Klee One',
+          ),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Klee One',
           ),
         ),
       ),
-      home: Builder(
+        home: Builder(
         builder: (context) => Scaffold(
           backgroundColor: Color(0xFFE8E2CA),
           appBar: AppBar(
@@ -391,8 +414,8 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   ),
                   label: Text('Log',
                     style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                   backgroundColor: Color(0xFFEA8176),
@@ -412,11 +435,9 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                       context,
                       MaterialPageRoute(builder: (context) => WeaknessAssessmentPage()),
                     );
-                    if (result != null) {
-                      setState(() {
-                        _warmupState?.selectedMovementIndex = result;
-                      });
-                    }
+                    setState(() {
+                      _warmupState?.selectedMovementIndex = result;
+                    });
                   },
                   child: Icon(
                     MaterialSymbols.conditions,
@@ -698,7 +719,7 @@ class _WarmupState extends State<Warmup> {
         },
         child: Scrollbar(
           // Add these lines to set the isAlwaysShown property and the controller
-          isAlwaysShown: true,
+          thumbVisibility: true,
           controller: _warmupScrollController,
           child: SingleChildScrollView(
             // Add this line to set the controller for the SingleChildScrollView

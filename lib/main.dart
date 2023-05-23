@@ -7,14 +7,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
-
-Future<void> _getPermission() async {
-  PermissionStatus permissionStatus = await Permission.microphone.status;
-  if (permissionStatus != PermissionStatus.granted) {
-    await Permission.microphone.request();
-  }
-}
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -100,85 +92,87 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Color(0xFFE8E2CA),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
+        return SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color(0xFFE8E2CA),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
             ),
-          ),
-          child: SingleChildScrollView(
-            controller: _modalScrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'General Warm-Ups to Address Weaknesses',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Klee One',
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '\u2022',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                        ' Based on the CrossFit Training Level 2 Guide\n',
-                      ),
-                      TextSpan(
-                        text: '\u2022',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                        ' Use them to add skill work by modality\n',
-                      ),
-                      TextSpan(
-                        text: '\u2022',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                        ' Performed for 2-3 rounds, each more complicated\n',
-                      ),
-                      TextSpan(
-                        text: '\u2022',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                        ' 5-15 reps per movement',
-                      ),
-                    ],
+            child: SingleChildScrollView(
+              controller: _modalScrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'General Warm-Ups to Address Weaknesses',
                     style: TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
                       fontFamily: 'Klee One',
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 8.0),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '\u2022',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          ' Based on the CrossFit Training Level 2 Guide\n',
+                        ),
+                        TextSpan(
+                          text: '\u2022',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          ' Use them to add skill work by modality\n',
+                        ),
+                        TextSpan(
+                          text: '\u2022',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          ' Performed for 2-3 rounds, each more complicated\n',
+                        ),
+                        TextSpan(
+                          text: '\u2022',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          ' 5-15 reps per movement',
+                        ),
+                      ],
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.black,
+                        fontFamily: 'Klee One',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -308,41 +302,44 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   ),
                 ),
                 SizedBox(height: 16.0),
-                SizedBox(
-                  height: 56, // size of the FloatingActionButton
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: FloatingActionButton.small(
-                          onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
-                          child: Icon(
-                            Icons.note_add,
-                            color: Colors.black,
-                          ),
-                          backgroundColor: Color(0xFFD2DCEA),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1.0),
-                            side: BorderSide(color: Colors.black, width: 2.0),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 16.0), // add appropriate padding
+                  child: SizedBox(
+                    height: 56, // size of the FloatingActionButton
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: FloatingActionButton.small(
+                            onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
+                            child: Icon(
+                              Icons.note_add,
+                              color: Colors.black,
+                            ),
+                            backgroundColor: Color(0xFFD2DCEA),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(1.0),
+                              side: BorderSide(color: Colors.black, width: 2.0),
+                            ),
                           ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: FloatingActionButton(
-                          onPressed: _listen,
-                          child: Icon(
-                            _isListening ? Icons.pause : Icons.mic,
-                            color: Colors.black,
+                        Align(
+                          alignment: Alignment.center,
+                          child: FloatingActionButton(
+                            onPressed: _listen,
+                            child: Icon(
+                              _isListening ? Icons.pause : Icons.mic,
+                              color: Colors.black,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(1.0),
+                              side: BorderSide(color: Colors.black, width: 2.0),
+                            ),
+                            backgroundColor: Color(0xFFEA8176),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1.0),
-                            side: BorderSide(color: Colors.black, width: 2.0),
-                          ),
-                          backgroundColor: Color(0xFFEA8176),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -360,8 +357,8 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       theme: ThemeData(
         fontFamily: 'Klee One',
         primaryColor: Color(0xFF759E80),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF759E80),
+        canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
+        appBarTheme: AppBarTheme(          backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
           toolbarTextStyle: TextStyle(
             color: Colors.black,
@@ -404,61 +401,63 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
           ),
 
           body: Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _showModalBottomSheet(context);
-                  },
-                  icon: Icon(Icons.info_outline),
-                  color: Colors.black,
-                ),
-                FloatingActionButton.extended(
-                  icon: Icon(
-                    Icons.score,
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _showModalBottomSheet(context);
+                    },
+                    icon: Icon(Icons.info_outline),
                     color: Colors.black,
                   ),
-                  label: Text('Log',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold
+                  FloatingActionButton.extended(
+                    icon: Icon(
+                      Icons.score,
+                      color: Colors.black,
+                    ),
+                    label: Text('Log',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    backgroundColor: Color(0xFFEA8176),
+                    onPressed: () {
+                      _showRecordingModalBottomSheet(context);
+                    },
+                    heroTag: "micButton",
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                      side: BorderSide(color: Colors.black, width: 2.0),
                     ),
                   ),
-                  backgroundColor: Color(0xFFEA8176),
-                  onPressed: () {
-                    _showRecordingModalBottomSheet(context);
-                  },
-                  heroTag: "micButton",
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1.0),
-                    side: BorderSide(color: Colors.black, width: 2.0),
+                  FloatingActionButton.small(
+                    heroTag: "weaknessAssessmentButton", // Add unique tag here
+                    onPressed: () async {
+                      int result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WeaknessAssessmentPage()),
+                      );
+                      setState(() {
+                        _warmupState?.selectedMovementIndex = result;
+                      });
+                    },
+                    child: Icon(
+                      MaterialSymbols.conditions,
+                      color: Colors.black,
+                    ),
+                    backgroundColor: Color(0xFFD2DCEA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.0),
+                      side: BorderSide(color: Colors.black, width: 2.0),
+                    ),
                   ),
-                ),
-                FloatingActionButton.small(
-                  heroTag: "weaknessAssessmentButton", // Add unique tag here
-                  onPressed: () async {
-                    int result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WeaknessAssessmentPage()),
-                    );
-                    setState(() {
-                      _warmupState?.selectedMovementIndex = result;
-                    });
-                  },
-                  child: Icon(
-                    MaterialSymbols.conditions,
-                    color: Colors.black,
-                  ),
-                  backgroundColor: Color(0xFFD2DCEA),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1.0),
-                    side: BorderSide(color: Colors.black, width: 2.0),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -846,9 +845,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.7,
-                            mainAxisSpacing: 8.0,
-                            crossAxisSpacing: 8.0,
+                            childAspectRatio: 0.6,
                           ),
                           itemBuilder: (BuildContext context, int index) {
                             bool disabled = imageNames[index] != 'overheadsquat.jpg';
@@ -1024,9 +1021,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 0.7,
-                            mainAxisSpacing: 8.0,
-                            crossAxisSpacing: 8.0,
+                            childAspectRatio: 0.6,
                           ),
                           itemBuilder: (BuildContext context, int index) {
                             bool disabled = imageNames[index] != 'overheadsquat.jpg';

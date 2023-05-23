@@ -29,8 +29,8 @@ android {
 
     defaultConfig {
         applicationId "com.weaknesswork"
-        minSdkVersion 16
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -49,5 +49,5 @@ flutter {
 }
 
 dependencies {
-
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
 }

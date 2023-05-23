@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
-import 'dart:html' as html;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> _getPermission() async {
+  PermissionStatus permissionStatus = await Permission.microphone.status;
+  if (permissionStatus != PermissionStatus.granted) {
+    await Permission.microphone.request();
+  }
+}
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -1133,25 +1142,20 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
   ChewieController? _chewieController;
 
   Future<void> _pickVideo() async {
-    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-    uploadInput.accept = 'video/*';
-    uploadInput.multiple = false;
-    uploadInput.click();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
 
-    uploadInput.onChange.listen((event) {
-      final file = uploadInput.files?.first;
-      if (file != null) {
-        final url = html.Url.createObjectUrl(file);
-        setState(() {
-          _videoPlayerController = VideoPlayerController.network(url);
-          _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController!,
-            autoPlay: true,
-            looping: true,
-          );
-        });
-      }
-    });
+    if(result != null) {
+      File file = File(result.files.single.path!);
+
+      setState(() {
+        _videoPlayerController = VideoPlayerController.file(file);
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController!,
+          autoPlay: true,
+          looping: true,
+        );
+      });
+    }
   }
 
   @override

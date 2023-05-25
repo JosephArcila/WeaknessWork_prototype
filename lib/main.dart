@@ -17,7 +17,11 @@ class WeaknessWorkApp extends StatefulWidget {
 
 class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   List<String> _transcriptions = [];
+
+  bool _isModalOpen = false;
 
   void _saveTranscription() {
     setState(() {
@@ -52,10 +56,18 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
             _currentTranscription = val.recognizedWords;
 
             // Check if the user has spoken the "save score" command
-            if (_recognizedWords.toLowerCase().contains("save my score")) {
+            if (_isListening && _recognizedWords.toLowerCase().contains("save my score")) {
               // Remove 'save score' from the transcript before saving
               _currentTranscription = _currentTranscription.replaceAll('save my score', '');
               _saveTranscription();
+            }
+
+            // Check if the user has spoken the "log my score" command
+            if (_isListening && _recognizedWords.toLowerCase().contains("log my score")) {
+              if (_scaffoldKey.currentContext != null && !_isModalOpen) {
+                _showRecordingModalBottomSheet(_scaffoldKey.currentContext!); // Open the 'RecordingModalBottomSheet' modal with the correct context
+              }
+              _recognizedWords = '';  // Reset _recognizedWords
             }
           }),
         );
@@ -236,99 +248,107 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
     ScrollController _modalScrollController = ScrollController();
     String currentDate = DateFormat('yyMMdd').format(DateTime.now());
 
+    _isModalOpen = true;
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Color(0xFFE8E2CA),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8.0),
-              topRight: Radius.circular(8.0),
+        return WillPopScope(
+          onWillPop: () async {
+            _isModalOpen = false;
+            return true;
+          },
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color(0xFFE8E2CA),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
+              ),
             ),
-          ),
-          child: SingleChildScrollView(
-            controller: _modalScrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row( // Change to Row widget
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.history),
-                      onPressed: () {
-                        Navigator.pop(context); // Close the 'RecordingModalBottomSheet' modal
-                        _showLogsModalBottomSheet(context); // Open the 'Logs' modal
-                      },
+            child: SingleChildScrollView(
+              controller: _modalScrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row( // Change to Row widget
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.history),
+                        onPressed: () {
+                          Navigator.pop(context); // Close the 'RecordingModalBottomSheet' modal
+                          _showLogsModalBottomSheet(context); // Open the 'Logs' modal
+                        },
+                      ),
+                      Text(
+                        'Log $currentDate',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Klee One',
+                        ),
+                      ),
+                      SizedBox(width: 48.0), // Provide a sizebox to balance the row
+                    ],
+                  ),
+                  SizedBox(height: 8.0),
+                  Card(
+                    color: Color(0xFFF4F1E6),
+                    shape: RoundedRectangleBorder(  // Set the card shape
+                      borderRadius: BorderRadius.circular(0),  // Squared card
                     ),
-                    Text(
-                      'Log $currentDate',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Klee One',
+                    child: ListTile(
+                      title: Text(
+                        _recognizedWords,
+                        style: TextStyle(fontSize: 16.0),
                       ),
                     ),
-                    SizedBox(width: 48.0), // Provide a sizebox to balance the row
-                  ],
-                ),
-                SizedBox(height: 8.0),
-                Card(
-                  color: Color(0xFFF4F1E6),
-                  shape: RoundedRectangleBorder(  // Set the card shape
-                    borderRadius: BorderRadius.circular(0),  // Squared card
                   ),
-                  child: ListTile(
-                    title: Text(
-                      _recognizedWords,
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 16.0), // add appropriate padding
-                  child: SizedBox(
-                    height: 56, // size of the FloatingActionButton
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: FloatingActionButton.small(
-                            onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
-                            child: Icon(
-                              Icons.note_add,
-                              color: Colors.black,
-                            ),
-                            backgroundColor: Color(0xFFD2DCEA),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(1.0),
-                              side: BorderSide(color: Colors.black, width: 2.0),
+                  SizedBox(height: 16.0),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16.0), // add appropriate padding
+                    child: SizedBox(
+                      height: 56, // size of the FloatingActionButton
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: FloatingActionButton.small(
+                              onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
+                              child: Icon(
+                                Icons.note_add,
+                                color: Colors.black,
+                              ),
+                              backgroundColor: Color(0xFFD2DCEA),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(1.0),
+                                side: BorderSide(color: Colors.black, width: 2.0),
+                              ),
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: FloatingActionButton(
-                            onPressed: _listen,
-                            child: Icon(
-                              _isListening ? Icons.stop : Icons.mic,
-                              color: Colors.black,
+                          Align(
+                            alignment: Alignment.center,
+                            child: FloatingActionButton(
+                              onPressed: _listen,
+                              child: Icon(
+                                _isListening ? Icons.stop : Icons.mic,
+                                color: Colors.black,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(1.0),
+                                side: BorderSide(color: Colors.black, width: 2.0),
+                              ),
+                              backgroundColor: Color(0xFFEA8176),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(1.0),
-                              side: BorderSide(color: Colors.black, width: 2.0),
-                            ),
-                            backgroundColor: Color(0xFFEA8176),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -362,6 +382,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       ),
         home: Builder(
         builder: (context) => Scaffold(
+          key: _scaffoldKey, // assign the key here
           backgroundColor: Color(0xFFE8E2CA),
           appBar: AppBar(
             title: RichText(

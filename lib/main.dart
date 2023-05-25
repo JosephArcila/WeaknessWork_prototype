@@ -50,6 +50,13 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
           onResult: (val) => setState(() {
             _recognizedWords = val.recognizedWords;
             _currentTranscription = val.recognizedWords;
+
+            // Check if the user has spoken the "save score" command
+            if (_recognizedWords.toLowerCase().contains("save my score")) {
+              // Remove 'save score' from the transcript before saving
+              _currentTranscription = _currentTranscription.replaceAll('save my score', '');
+              _saveTranscription();
+            }
           }),
         );
       }

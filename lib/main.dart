@@ -15,27 +15,6 @@ class WeaknessWorkApp extends StatefulWidget {
   _WeaknessWorkAppState createState() => _WeaknessWorkAppState();
 }
 
-class SpeechBubble extends StatelessWidget {
-  final String text;
-
-  SpeechBubble({Key? key, required this.text}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Color(0xFFF4F1E6),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 16.0),
-      ),
-    );
-  }
-}
-
 class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
   List<String> _transcriptions = [];
@@ -86,7 +65,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
-  void _showModalBottomSheet(BuildContext context) {
+  void _showAppInfoModalBottomSheet(BuildContext context) {
     ScrollController _modalScrollController = ScrollController();
 
     showModalBottomSheet(
@@ -328,7 +307,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                           child: FloatingActionButton(
                             onPressed: _listen,
                             child: Icon(
-                              _isListening ? Icons.pause : Icons.mic,
+                              _isListening ? Icons.stop : Icons.mic,
                               color: Colors.black,
                             ),
                             shape: RoundedRectangleBorder(
@@ -409,7 +388,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      _showModalBottomSheet(context);
+                      _showAppInfoModalBottomSheet(context);
                     },
                     icon: Icon(Icons.info_outline),
                     color: Colors.black,

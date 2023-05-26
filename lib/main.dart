@@ -17,73 +17,6 @@ class WeaknessWorkApp extends StatefulWidget {
 
 class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  List<String> _transcriptions = [];
-
-  bool _isModalOpen = false;
-
-  void _saveTranscription() {
-    setState(() {
-      _transcriptions.add(_currentTranscription);
-      _currentTranscription = '';
-      _recognizedWords = '';
-    });
-  }
-
-  stt.SpeechToText _speech = stt.SpeechToText();
-  bool _isListening = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  String _recognizedWords = '';
-  String _currentTranscription = '';
-
-  void _listen() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) => setState(() {
-            _recognizedWords = val.recognizedWords;
-            _currentTranscription = val.recognizedWords;
-
-            // Check if the user has spoken the "save score" command
-            if (_isListening && _recognizedWords.toLowerCase().contains("save my score")) {
-              // Remove 'save score' from the transcript before saving
-              _currentTranscription = _currentTranscription.replaceAll('save my score', '');
-              _saveTranscription();
-            }
-
-            // Check if the user has spoken the "log my score" command
-            if (_isListening && _recognizedWords.toLowerCase().contains("log my score")) {
-              if (_scaffoldKey.currentContext != null && !_isModalOpen) {
-                _showRecordingModalBottomSheet(_scaffoldKey.currentContext!); // Open the 'RecordingModalBottomSheet' modal with the correct context
-              }
-              _recognizedWords = '';  // Reset _recognizedWords
-            }
-          }),
-        );
-      }
-    } else {
-      setState(() {
-        _isListening = false;
-        _speech.stop();
-      });
-    }
-  }
-
-  final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
-
-  _WarmupState? get _warmupState => _warmupStateKey.currentState;
-
   void _showAppInfoModalBottomSheet(BuildContext context) {
     ScrollController _modalScrollController = ScrollController();
 
@@ -177,6 +110,80 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
       },
     );
   }
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  List<String> _transcriptions = [];
+
+  bool _isModalOpen = false;
+
+  void _removeCommandWords() {
+    _currentTranscription = _currentTranscription.replaceAll('Record', '');
+    _currentTranscription = _currentTranscription.replaceAll('save', '');
+    _currentTranscription = _currentTranscription.trim();
+  }
+
+  stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  String _recognizedWords = '';
+  String _currentTranscription = '';
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _recognizedWords = val.recognizedWords;
+            if (_isListening && _recognizedWords.toLowerCase().contains("save")) {
+              _currentTranscription = _recognizedWords.replaceAll('save', '').trim();
+              _saveTranscription();
+            }
+            if (_isListening && _recognizedWords.toLowerCase().contains("record")) {
+              _currentTranscription = _recognizedWords.replaceAll('record', '').trim();
+              if (_scaffoldKey.currentContext != null && !_isModalOpen) {
+                _showRecordingModalBottomSheet(_scaffoldKey.currentContext!);
+              }
+              _recognizedWords = '';
+            }
+            else {
+              _currentTranscription = _recognizedWords;
+            }
+          }),
+        );
+      }
+    } else {
+      setState(() {
+        _isListening = false;
+        _speech.stop();
+      });
+    }
+  }
+
+  void _saveTranscription() {
+    setState(() {
+      _removeCommandWords();
+      _transcriptions.add(_currentTranscription);
+      _currentTranscription = '';
+      _recognizedWords = '';
+      _isListening = false; // Add this line to stop listening
+      _speech.stop(); // Add this line to stop recording
+    });
+  }
+
+  final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
+
+  _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   void _showLogsModalBottomSheet(BuildContext context) {
     ScrollController _modalScrollController = ScrollController();
@@ -301,7 +308,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     child: ListTile(
                       title: Text(
-                        _recognizedWords,
+                        _currentTranscription.replaceAll('Record', '').replaceAll('save', ''),
                         style: TextStyle(fontSize: 16.0),
                       ),
                     ),
@@ -316,7 +323,9 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: FloatingActionButton.small(
-                              onPressed: _saveTranscription,  // Save the transcription when the note_add button is pressed
+                              onPressed: () {
+                                _saveTranscription(); // Save the transcription when the note_add button is pressed
+                              },
                               child: Icon(
                                 Icons.note_add,
                                 color: Colors.black,

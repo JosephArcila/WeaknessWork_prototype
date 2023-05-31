@@ -395,19 +395,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
         (await rootBundle.loadString('assets/test_service_account.json')));
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
 
-    final config = RecognitionConfig(
-        encoding: AudioEncoding.LINEAR16,
-        model: RecognitionModel.command_and_search,
-        enableAutomaticPunctuation: true,
-        sampleRateHertz: 16000,
-        languageCode: 'en-US',
-        speechContexts: [SpeechContext(["AMRAP", "EMOM", "WOD", "Metcon", "PR", "RX", "deadlift",
-          "plank hold", "calorie row", "box jump", "wall-ball", "burpee", "Clean and jerk",
-          "Snatch", "double-under", "kipping", "Thruster", "Muscle-up", "handstand push-ups",
-          "toes-to-bar", "kettlebell swing", "Fran", "Cindy", "Murph", "Lynne",
-          "bench press", "pull-up", "round", "rep", "max reps", "body weight"])
-        ]
-    );
+    final config = _getConfig();
 
     final responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: config, interimResults: true),
@@ -450,10 +438,17 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 
   RecognitionConfig _getConfig() => RecognitionConfig(
       encoding: AudioEncoding.LINEAR16,
-      model: RecognitionModel.basic,
+      model: RecognitionModel.command_and_search,
       enableAutomaticPunctuation: true,
       sampleRateHertz: 16000,
-      languageCode: 'en-US');
+      languageCode: 'en-US',
+      speechContexts: [SpeechContext(["AMRAP", "EMOM", "WOD", "Metcon", "PR", "RX", "deadlift",
+        "plank hold", "calorie row", "box jump", "wall-ball", "burpee", "Clean and jerk",
+        "Snatch", "double-under", "kipping", "Thruster", "Muscle-up", "handstand push-ups",
+        "toes-to-bar", "kettlebell swing", "Fran", "Cindy", "Murph", "Lynne",
+        "bench press", "pull-up", "round", "rep", "max reps", "body weight"])
+      ]
+  );
 
   @override
   Widget build(BuildContext context) {

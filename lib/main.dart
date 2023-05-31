@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
+import 'package:google_speech/speech_client_authenticator.dart';
+import 'package:google_speech/google_speech.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
+
+const int kAudioSampleRate = 16000;
+const int kAudioNumChannels = 1;
 
 void main() => runApp(WeaknessWorkApp());
 
@@ -113,257 +122,14 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<String> _transcriptions = [];
-
-  bool _isModalOpen = false;
-
-  void _removeCommandWords() {
-    _currentTranscription = _currentTranscription.replaceAll('Record', '');
-    _currentTranscription = _currentTranscription.replaceAll('save', '');
-    _currentTranscription = _currentTranscription.trim();
-  }
-
-  stt.SpeechToText _speech = stt.SpeechToText();
-  bool _isListening = false;
-
   @override
   void initState() {
     super.initState();
   }
 
-  String _recognizedWords = '';
-  String _currentTranscription = '';
-
-  void _listen() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) => setState(() {
-            _recognizedWords = val.recognizedWords;
-            if (_isListening && _recognizedWords.toLowerCase().contains("save")) {
-              _currentTranscription = _recognizedWords.replaceAll('save', '').trim();
-              _saveTranscription();
-            }
-            if (_isListening && _recognizedWords.toLowerCase().contains("record")) {
-              _currentTranscription = _recognizedWords.replaceAll('record', '').trim();
-              if (_scaffoldKey.currentContext != null && !_isModalOpen) {
-                _showRecordingModalBottomSheet(_scaffoldKey.currentContext!);
-              }
-              _recognizedWords = '';
-            }
-            else {
-              _currentTranscription = _recognizedWords;
-            }
-          }),
-        );
-      }
-    } else {
-      setState(() {
-        _isListening = false;
-        _speech.stop();
-      });
-    }
-  }
-
-  void _saveTranscription() {
-    setState(() {
-      _removeCommandWords();
-      _transcriptions.add(_currentTranscription);
-      _currentTranscription = '';
-      _recognizedWords = '';
-      _isListening = false; // Add this line to stop listening
-      _speech.stop(); // Add this line to stop recording
-    });
-  }
-
   final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
 
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
-
-  void _showLogsModalBottomSheet(BuildContext context) {
-    ScrollController _modalScrollController = ScrollController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Add this line
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.9, // Change this to whatever height you want
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Color(0xFFE8E2CA),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _modalScrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () {
-                          Navigator.pop(context); // Close the 'Logs' modal
-                          _showRecordingModalBottomSheet(context); // Open the 'RecordingModalBottomSheet' modal
-                        },
-                      ),
-                      Text(
-                        'Logs',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      SizedBox(width: 48.0), // Provide a sizebox to balance the row
-                    ],
-                  ),
-                  ..._transcriptions.map((transcription) => Card(
-                    color: Color(0xFFF4F1E6),
-                    shape: RoundedRectangleBorder(  // Set the card shape
-                      borderRadius: BorderRadius.circular(0),  // Squared card
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        transcription,
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                  )
-                  ).toList(),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showRecordingModalBottomSheet(BuildContext context) {
-    ScrollController _modalScrollController = ScrollController();
-    String currentDate = DateFormat('yyMMdd').format(DateTime.now());
-
-    _isModalOpen = true;
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async {
-            _isModalOpen = false;
-            return true;
-          },
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Color(0xFFE8E2CA),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _modalScrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row( // Change to Row widget
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.history),
-                        onPressed: () {
-                          Navigator.pop(context); // Close the 'RecordingModalBottomSheet' modal
-                          _showLogsModalBottomSheet(context); // Open the 'Logs' modal
-                        },
-                      ),
-                      Text(
-                        'Log $currentDate',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Klee One',
-                        ),
-                      ),
-                      SizedBox(width: 48.0), // Provide a sizebox to balance the row
-                    ],
-                  ),
-                  SizedBox(height: 8.0),
-                  Card(
-                    color: Color(0xFFF4F1E6),
-                    shape: RoundedRectangleBorder(  // Set the card shape
-                      borderRadius: BorderRadius.circular(0),  // Squared card
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        _currentTranscription.replaceAll('Record', '').replaceAll('save', ''),
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16.0), // add appropriate padding
-                    child: SizedBox(
-                      height: 56, // size of the FloatingActionButton
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: FloatingActionButton.small(
-                              onPressed: () {
-                                _saveTranscription(); // Save the transcription when the note_add button is pressed
-                              },
-                              child: Icon(
-                                Icons.note_add,
-                                color: Colors.black,
-                              ),
-                              backgroundColor: Color(0xFFD2DCEA),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(1.0),
-                                side: BorderSide(color: Colors.black, width: 2.0),
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: FloatingActionButton(
-                              onPressed: _listen,
-                              child: Icon(
-                                _isListening ? Icons.stop : Icons.mic,
-                                color: Colors.black,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(1.0),
-                                side: BorderSide(color: Colors.black, width: 2.0),
-                              ),
-                              backgroundColor: Color(0xFFEA8176),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -443,7 +209,10 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     ),
                     backgroundColor: Color(0xFFEA8176),
                     onPressed: () {
-                      _showRecordingModalBottomSheet(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AudioRecognize()),
+                      );
                     },
                     heroTag: "micButton",
                     shape: RoundedRectangleBorder(
@@ -477,6 +246,172 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AudioRecognize extends StatefulWidget {
+  const AudioRecognize({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _AudioRecognizeState();
+}
+
+class _AudioRecognizeState extends State<AudioRecognize> {
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+
+  bool recognizing = false;
+  bool recognizeFinished = false;
+  String text = '';
+  StreamSubscription<List<int>>? _audioStreamSubscription;
+  BehaviorSubject<List<int>>? _audioStream;
+  StreamController<Food>? _recordingDataController;
+  StreamSubscription? _recordingDataSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void streamingRecognize() async {
+    await _recorder.openAudioSession();
+    // Stream to be consumed by speech recognizer
+    _audioStream = BehaviorSubject<List<int>>();
+
+    // Create recording stream
+    _recordingDataController = StreamController<Food>();
+    _recordingDataSubscription =
+        _recordingDataController?.stream.listen((buffer) {
+          if (buffer is FoodData) {
+            _audioStream!.add(buffer.data!);
+          }
+        });
+
+    setState(() {
+      recognizing = true;
+    });
+
+    await Permission.microphone.request();
+
+    await _recorder.startRecorder(
+        toStream: _recordingDataController!.sink,
+        codec: Codec.pcm16,
+        numChannels: kAudioNumChannels,
+        sampleRate: kAudioSampleRate);
+
+    final serviceAccount = ServiceAccount.fromString(
+        (await rootBundle.loadString('assets/test_service_account.json')));
+    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
+
+    final config = RecognitionConfig(
+        encoding: AudioEncoding.LINEAR16,
+        model: RecognitionModel.command_and_search,
+        enableAutomaticPunctuation: true,
+        sampleRateHertz: 16000,
+        languageCode: 'en-US',
+        speechContexts: [SpeechContext(["AMRAP", "EMOM", "WOD", "Metcon", "PR", "RX", "deadlift",
+          "plank hold", "calorie row", "box jump", "wall-ball", "burpee", "Clean and jerk",
+          "Snatch", "double-under", "kipping", "Thruster", "Muscle-up", "handstand push-ups",
+          "toes-to-bar", "kettlebell swing", "Fran", "Cindy", "Murph", "Lynne",
+          "bench press", "pull-up", "round", "rep", "max reps", "body weight"])
+        ]
+    );
+
+    final responseStream = speechToText.streamingRecognize(
+        StreamingRecognitionConfig(config: config, interimResults: true),
+        _audioStream!);
+
+    var responseText = '';
+
+    responseStream.listen((data) {
+      final currentText =
+      data.results.map((e) => e.alternatives.first.transcript).join('\n');
+
+      if (data.results.first.isFinal) {
+        responseText += '\n' + currentText;
+        setState(() {
+          text = responseText;
+          recognizeFinished = true;
+        });
+      } else {
+        setState(() {
+          text = responseText + '\n' + currentText;
+          recognizeFinished = true;
+        });
+      }
+    }, onDone: () {
+      setState(() {
+        recognizing = false;
+      });
+    });
+  }
+
+  void stopRecording() async {
+    await _recorder.stopRecorder();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
+    await _recordingDataSubscription?.cancel();
+    setState(() {
+      recognizing = false;
+    });
+  }
+
+  RecognitionConfig _getConfig() => RecognitionConfig(
+      encoding: AudioEncoding.LINEAR16,
+      model: RecognitionModel.basic,
+      enableAutomaticPunctuation: true,
+      sampleRateHertz: 16000,
+      languageCode: 'en-US');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Audio File Example'),
+      ),
+      body: Center(
+        child: ListView(
+          children: <Widget>[
+            if (recognizeFinished)
+              _RecognizeContent(
+                text: text,
+              ),
+            ElevatedButton(
+              onPressed: recognizing ? stopRecording : streamingRecognize,
+              child: recognizing
+                  ? const Text('Stop recording')
+                  : const Text('Start Streaming from mic'),
+            ),
+          ],
+        ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class _RecognizeContent extends StatelessWidget {
+  final String text;
+
+  const _RecognizeContent({Key? key, required this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          const Text(
+            'The text recognized by the Google Speech Api:',
+          ),
+          const SizedBox(
+            height: 16.0,
+          ),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
       ),
     );
   }

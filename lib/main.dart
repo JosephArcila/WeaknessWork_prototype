@@ -3,7 +3,6 @@ import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:google_speech/speech_client_authenticator.dart';
@@ -102,6 +101,40 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                         TextSpan(
                           text:
                           ' 5-15 reps per movement',
+                        ),
+                      ],
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.black,
+                        fontFamily: 'Klee One',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Record: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          'Starts recording the workout result.\n',
+                        ),
+                        TextSpan(
+                          text: 'Save: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                          'Saves the recorded workout result.\n',
                         ),
                       ],
                       style: TextStyle(
@@ -272,6 +305,59 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showVoiceCommandGuideDialog();
+    });
+  }
+
+  void _showVoiceCommandGuideDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Voice Command Guide', style: TextStyle(fontFamily: 'Klee One', fontSize: 20.0, fontWeight: FontWeight.bold)),
+          content: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Record: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Klee One',
+                  ),
+                ),
+                TextSpan(
+                  text: 'Starts recording the workout result.\n',
+                ),
+                TextSpan(
+                  text: 'Save: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Klee One',
+                  ),
+                ),
+                TextSpan(
+                  text: 'Saves the recorded workout result.\n',
+                ),
+              ],
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black,
+                fontFamily: 'Klee One',
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Got it', style: TextStyle(fontFamily: 'Klee One')),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void streamingRecognize() async {
@@ -291,6 +377,11 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     setState(() {
       recognizing = true;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Start speaking to log your workout...'),
+      duration: Duration(seconds: 2),
+    ));
 
     await Permission.microphone.request();
 
@@ -368,11 +459,13 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Audio File Example'),
+        title: recognizing ? const Text('Recording...') : const Text('Voice Log Preview'),
       ),
       body: Center(
         child: ListView(
           children: <Widget>[
+            if (recognizing)
+              CircularProgressIndicator(),
             if (recognizeFinished)
               _RecognizeContent(
                 text: text,
@@ -380,8 +473,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
             ElevatedButton(
               onPressed: recognizing ? stopRecording : streamingRecognize,
               child: recognizing
-                  ? const Text('Stop recording')
-                  : const Text('Start Streaming from mic'),
+                  ? const Text('Recording...')
+                  : const Text('Start Voice Log'),
             ),
           ],
         ),
@@ -402,7 +495,7 @@ class _RecognizeContent extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const Text(
-            'The text recognized by the Google Speech Api:',
+            'Your Spoken Workout Log:',
           ),
           const SizedBox(
             height: 16.0,

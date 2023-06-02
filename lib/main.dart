@@ -12,18 +12,71 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
 
 void main() => runApp(WeaknessWorkApp());
 
-class WeaknessWorkApp extends StatefulWidget {
+class WeaknessWorkApp extends StatelessWidget {
   @override
-  _WeaknessWorkAppState createState() => _WeaknessWorkAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'WeaknessWork',
+      theme: ThemeData(
+        fontFamily: 'Klee One',
+        primaryColor: Color(0xFF759E80),
+        canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
+        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF759E80),
+          iconTheme: IconThemeData(color: Colors.black),
+          toolbarTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Klee One',
+          ),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Klee One',
+          ),
+        ),
+      ),
+      home: HomePage(),
+    );
+  }
 }
 
-class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  stt.SpeechToText? _speech;
+  bool _isListening = false;
+  bool _isNavigating = false;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
+  final GlobalKey<_AudioRecognizeState> _audioRecognizeKey = GlobalKey<_AudioRecognizeState>();
+  _WarmupState? get _warmupState => _warmupStateKey.currentState;
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _listen();
+    });
+  }
+
+  @override
+  void dispose() {
+    _speech?.stop();
+    super.dispose();
+  }
 
   void _showAppInfoModalBottomSheet(BuildContext context) {
     ScrollController _modalScrollController = ScrollController();
@@ -47,7 +100,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'General Warm-Ups to Address Weaknesses',
+                    'App info',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -58,6 +111,14 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                   RichText(
                     text: TextSpan(
                       children: [
+                        TextSpan(
+                          text: 'General Warm-Ups to Address Weaknesses \n',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Klee One',
+                              fontSize: 20.0
+                          ),
+                        ),
                         TextSpan(
                           text: '\u2022',
                           style: TextStyle(
@@ -115,7 +176,15 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'Record: ',
+                          text: 'Voice Command Guide \n',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Klee One',
+                              fontSize: 20.0
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'All right record: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Klee One',
@@ -126,7 +195,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
                           'Starts recording the workout result.\n',
                         ),
                         TextSpan(
-                          text: 'Save: ',
+                          text: 'All right save: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Klee One',
@@ -153,16 +222,53 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
     );
   }
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech!.initialize(
+        onStatus: (val) {
+          if (val == 'notListening') {
+            setState(() => _isListening = false);
+          } else {
+            setState(() => _isListening = true);
+          }
+        },
+        onError: (val) => print('Error: $val'),
+      );
+      if (available) {
+        _speech!.listen(
+          onResult: (val) async {
+            print('Recognized words: ${val.recognizedWords}');
+            final recognizedWords = val.recognizedWords.toLowerCase().trim();
+            if (recognizedWords == 'all right record' && !_isNavigating) {
+              _isNavigating = true; // Set flag to prevent navigation loop
+              _speech?.stop();
+              await Future.delayed(Duration(milliseconds: 500));
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AudioRecognize(startImmediately: true)),
+              );
+              _audioRecognizeKey.currentState!.startRecording();
+              bool available = await _speech!.initialize(
+                onStatus: (val) {
+                  if (val == 'notListening') {
+                    setState(() => _isListening = false);
+                  } else {
+                    setState(() => _isListening = true);
+                  }
+                },
+                onError: (val) => print('Error: $val'),
+              );
+              if (available) {
+                _speech?.listen(); // Start listening again
+                setState(() => _isListening = true); // Ensure _isListening is set to true
+              }
+              _isNavigating = false;
+            }
+          },
+        );
+      }
+    }
   }
-
-  final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
-
-  _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +278,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
         fontFamily: 'Klee One',
         primaryColor: Color(0xFF759E80),
         canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
-        appBarTheme: AppBarTheme(          backgroundColor: Color(0xFF759E80),
+        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
           toolbarTextStyle: TextStyle(
             color: Colors.black,
@@ -188,7 +294,7 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
           ),
         ),
       ),
-        home: Builder(
+      home: Builder(
         builder: (context) => Scaffold(
           key: _scaffoldKey, // assign the key here
           backgroundColor: Color(0xFFE8E2CA),
@@ -285,7 +391,9 @@ class _WeaknessWorkAppState extends State<WeaknessWorkApp> {
 }
 
 class AudioRecognize extends StatefulWidget {
-  const AudioRecognize({Key? key}) : super(key: key);
+  final bool startImmediately;
+
+  const AudioRecognize({Key? key, this.startImmediately = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AudioRecognizeState();
@@ -306,58 +414,16 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showVoiceCommandGuideDialog();
+      if (widget.startImmediately) {
+        startRecording();
+      }
     });
   }
 
-  void _showVoiceCommandGuideDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Voice Command Guide', style: TextStyle(fontFamily: 'Klee One', fontSize: 20.0, fontWeight: FontWeight.bold)),
-          content: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Record: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Klee One',
-                  ),
-                ),
-                TextSpan(
-                  text: 'Starts recording the workout result.\n',
-                ),
-                TextSpan(
-                  text: 'Save: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Klee One',
-                  ),
-                ),
-                TextSpan(
-                  text: 'Saves the recorded workout result.\n',
-                ),
-              ],
-              style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.black,
-                fontFamily: 'Klee One',
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Got it', style: TextStyle(fontFamily: 'Klee One')),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void startRecording() {
+    if (!recognizing) {
+      streamingRecognize();
+    }
   }
 
   void streamingRecognize() async {

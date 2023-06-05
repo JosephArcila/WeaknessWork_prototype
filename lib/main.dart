@@ -99,15 +99,6 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'App info',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Klee One',
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
                   RichText(
                     text: TextSpan(
                       children: [
@@ -193,17 +184,6 @@ class _HomePageState extends State<HomePage> {
                         TextSpan(
                           text:
                           'Starts recording the workout result.\n',
-                        ),
-                        TextSpan(
-                          text: 'All right save: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
-                        ),
-                        TextSpan(
-                          text:
-                          'Saves the recorded workout result.\n',
                         ),
                       ],
                       style: TextStyle(
@@ -340,13 +320,12 @@ class _HomePageState extends State<HomePage> {
                       Icons.score,
                       color: Colors.black,
                     ),
-                    label: Text('Log',
+                    label: Text('Results',
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold
                       ),
                     ),
-                    backgroundColor: Color(0xFFEA8176),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -354,6 +333,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     heroTag: "micButton",
+                    backgroundColor: Color(0xFFEA8176),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1.0),
                       side: BorderSide(color: Colors.black, width: 2.0),
@@ -444,11 +424,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
       recognizing = true;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Start speaking to log your workout...'),
-      duration: Duration(seconds: 2),
-    ));
-
     await Permission.microphone.request();
 
     await _recorder.startRecorder(
@@ -470,18 +445,13 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     var responseText = '';
 
     responseStream.listen((data) {
-      final currentText =
-      data.results.map((e) => e.alternatives.first.transcript).join('\n');
-
       if (data.results.first.isFinal) {
-        responseText += '\n' + currentText;
+        final currentText =
+        data.results.map((e) => e.alternatives.first.transcript).join('\n');
+
+        responseText += responseText.isEmpty ? currentText : '\n' + currentText;
         setState(() {
           text = responseText;
-          recognizeFinished = true;
-        });
-      } else {
-        setState(() {
-          text = responseText + '\n' + currentText;
           recognizeFinished = true;
         });
       }
@@ -509,10 +479,23 @@ class _AudioRecognizeState extends State<AudioRecognize> {
       sampleRateHertz: 16000,
       languageCode: 'en-US',
       speechContexts: [SpeechContext(["AMRAP", "EMOM", "WOD", "Metcon", "PR", "RX", "deadlift",
-        "plank hold", "calorie row", "box jump", "wall-ball", "burpee", "Clean and jerk",
-        "Snatch", "double-under", "kipping", "Thruster", "Muscle-up", "handstand push-ups",
-        "toes-to-bar", "kettlebell swing", "Fran", "Cindy", "Murph", "Lynne",
-        "bench press", "pull-up", "round", "rep", "max reps", "body weight"])
+        "plank hold", "calorie row", "box jump", "wall-ball", "burpee",
+        "Clean and jerk", "Snatch", "double-under", "kipping", "Thruster",
+        "Muscle-up", "handstand push-ups", "toes-to-bar", "kettlebell swing",
+        "Fran", "Cindy", "Murph", "Lynne", "bench press", "pull-up", "round",
+        "rep", "max reps", "body weight", "Angie", "Barbara", "Chelsea", "Diane",
+        "Elizabeth", "Grace", "Helen", "Isabel", "Jackie", "Karen", "Linda", "Mary",
+        "Nancy", "Annie", "Eva", "Kelly", "Nicole", "Amanda", "Gwen", "Marguerita",
+        "Candy", "Maggie", "Hope", "Grettel", "Ingrid", "Barbara Ann", "Lyla",
+        "Ellen", "Andi", "Lane", "clean and jerks", "snatches", "thrusters",
+        "sumo deadlift high pulls", "front squats", "hang power snatches",
+        "push presses", "handstand push-ups", "one-legged squats", "burpees over the bar",
+        "bodyweight clean and jerks", "dumbbell snatches", "dumbbell thrusters",
+        "for time", "rounds for time", "reps for time", "complete as many rounds as possible",
+        "every minute on the minute", "max reps", "rest precisely", "body-weight",
+        "same load", "rotate", "score", "single dumbbell", "pair", "single-arm",
+        "double-arm", "alternating legs", "touch and go", "no dumping", "re-grip",
+        "foul"])
       ]
   );
 
@@ -520,26 +503,62 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: recognizing ? const Text('Recording...') : const Text('Voice Log Preview'),
+        title: recognizing ? const Text('Recording...') : const Text('Results'),
       ),
-      body: Center(
-        child: ListView(
+      body: SafeArea(
+        child: Stack(
           children: <Widget>[
-            if (recognizing)
-              CircularProgressIndicator(),
-            if (recognizeFinished)
-              _RecognizeContent(
-                text: text,
+            Column(
+              children: <Widget>[
+                if (recognizing)
+                  LinearProgressIndicator(
+                    backgroundColor: Color(0xFFD2DCEA),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFB84F52)),
+                  ),
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Text(
+                            'Your Spoken Workout Log:',
+                          ),
+                        ),
+                        if (recognizeFinished)
+                          _RecognizeContent(
+                            text: text,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: FloatingActionButton.extended(
+                  onPressed: recognizing ? stopRecording : streamingRecognize,
+                  label: Text(recognizing ? 'Stop' : 'Start Voice Log', style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold)),
+                  icon: Icon(recognizing ? Icons.stop : Icons.mic, color: Colors.black,),
+                  backgroundColor: Color(0xFFEA8176),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(1.0),
+                    side: BorderSide(color: Colors.black, width: 2.0),
+                  ),
+                ),
               ),
-            ElevatedButton(
-              onPressed: recognizing ? stopRecording : streamingRecognize,
-              child: recognizing
-                  ? const Text('Recording...')
-                  : const Text('Start Voice Log'),
             ),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
@@ -553,19 +572,12 @@ class _RecognizeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: <Widget>[
-          const Text(
-            'Your Spoken Workout Log:',
-          ),
-          const SizedBox(
-            height: 16.0,
-          ),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.all(2.0),
+        color: Color(0xFFF4F1E6), // background color
+        child: Text(
+          text,
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:intl/intl.dart';
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
@@ -27,21 +28,10 @@ class WeaknessWorkApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Klee One',
         primaryColor: Color(0xFF759E80),
-        canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
-        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF759E80),
+        canvasColor: Color(0xFFE8E2CA),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
-          toolbarTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Klee One',
-          ),
-          titleTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Klee One',
-          ),
         ),
       ),
       home: HomePage(),
@@ -60,7 +50,8 @@ class _HomePageState extends State<HomePage> {
   bool _isNavigating = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
-  final GlobalKey<_AudioRecognizeState> _audioRecognizeKey = GlobalKey<_AudioRecognizeState>();
+  final GlobalKey<_AudioRecognizeState> _audioRecognizeKey =
+      GlobalKey<_AudioRecognizeState>();
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   @override
@@ -104,62 +95,26 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         TextSpan(
                           text: 'General Warm-Ups to Address Weaknesses \n',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Klee One',
-                              fontSize: 20.0
-                          ),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: '\u2022',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
+                          text: '\u2022 Based on the CrossFit Training Level 2 Guide\n',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextSpan(
-                          text:
-                          ' Based on the CrossFit Training Level 2 Guide\n',
+                          text: '\u2022 Use them to add skill work by modality\n',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextSpan(
-                          text: '\u2022',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
+                          text: '\u2022 Performed for 2-3 rounds, each more complicated\n',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextSpan(
-                          text:
-                          ' Use them to add skill work by modality\n',
-                        ),
-                        TextSpan(
-                          text: '\u2022',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
-                        ),
-                        TextSpan(
-                          text:
-                          ' Performed for 2-3 rounds, each more complicated\n',
-                        ),
-                        TextSpan(
-                          text: '\u2022',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
-                        ),
-                        TextSpan(
-                          text:
-                          ' 5-15 reps per movement',
+                          text: '\u2022 5-15 reps per movement',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontFamily: 'Klee One',
-                      ),
+                        style: Theme.of(context).textTheme.bodyMedium
                     ),
                   ),
                   SizedBox(height: 8.0),
@@ -168,29 +123,17 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         TextSpan(
                           text: 'Voice Command Guide \n',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                              fontSize: 20.0
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
                           text: 'All right record: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Klee One',
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text:
-                          'Starts recording the workout result.\n',
+                          text: 'Starts recording the workout result.\n',
                         ),
                       ],
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontFamily: 'Klee One',
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                 ],
@@ -225,7 +168,9 @@ class _HomePageState extends State<HomePage> {
               await Future.delayed(Duration(milliseconds: 500));
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AudioRecognize(startImmediately: true)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AudioRecognize(startImmediately: true)),
               );
               _audioRecognizeKey.currentState!.startRecording();
               bool available = await _speech!.initialize(
@@ -240,7 +185,8 @@ class _HomePageState extends State<HomePage> {
               );
               if (available) {
                 _speech?.listen(); // Start listening again
-                setState(() => _isListening = true); // Ensure _isListening is set to true
+                setState(() =>
+                    _isListening = true); // Ensure _isListening is set to true
               }
               _isNavigating = false;
             }
@@ -258,20 +204,9 @@ class _HomePageState extends State<HomePage> {
         fontFamily: 'Klee One',
         primaryColor: Color(0xFF759E80),
         canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
-        appBarTheme: AppBarTheme(backgroundColor: Color(0xFF759E80),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
-          toolbarTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Klee One',
-          ),
-          titleTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Klee One',
-          ),
         ),
       ),
       home: Builder(
@@ -279,63 +214,58 @@ class _HomePageState extends State<HomePage> {
           key: _scaffoldKey, // assign the key here
           backgroundColor: Color(0xFFE8E2CA),
           appBar: AppBar(
-            title: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'W',
-                    style: TextStyle(color: Color(0xFFD2DCEA), fontSize: 20.0, fontFamily: 'Klee One'),
-                  ),
-                  TextSpan(
-                    text: 'W',
-                    style: TextStyle(color: Color(0xFFB84F52), fontSize: 20.0, fontFamily: 'Klee One'),
-                  ),
-                  TextSpan(
-                    text: ' WeaknessWork',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0, fontFamily: 'Klee One'),
-                  ),
-                ],
-                style: DefaultTextStyle.of(context).style.copyWith(decoration: TextDecoration.none),
+            title: Container(
+              padding: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Color(0xFFA3424B)),
+              child: RichText(
+                text: TextSpan(
+                  text: 'WeaknessWork',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
             ),
             backgroundColor: Color(0xFF759E80),
           ),
-
-          body: Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
+          body:
+              Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
+                  FloatingActionButton.small(
+                    backgroundColor: Color(0xFFD2DCEA),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black, width: 2.0),
+                    ),
                     onPressed: () {
                       _showAppInfoModalBottomSheet(context);
                     },
-                    icon: Icon(Icons.info_outline),
-                    color: Colors.black,
+                    child: Icon(Icons.info_outline, color: Colors.black),
                   ),
                   FloatingActionButton.extended(
                     icon: Icon(
                       Icons.score,
                       color: Colors.black,
                     ),
-                    label: Text('Results',
+                    label: Text(
+                      'Results',
                       style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold
-                      ),
+                          color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AudioRecognize()),
+                        MaterialPageRoute(
+                            builder: (context) => AudioRecognize()),
                       );
                     },
                     heroTag: "micButton",
-                    backgroundColor: Color(0xFFEA8176),
+                    backgroundColor: Color(0xFFCF8E88),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(1.0),
                       side: BorderSide(color: Colors.black, width: 2.0),
                     ),
                   ),
@@ -344,7 +274,8 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () async {
                       int result = await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => WeaknessAssessmentPage()),
+                        MaterialPageRoute(
+                            builder: (context) => WeaknessAssessmentPage()),
                       );
                       setState(() {
                         _warmupState?.selectedMovementIndex = result;
@@ -356,7 +287,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     backgroundColor: Color(0xFFD2DCEA),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(1.0),
                       side: BorderSide(color: Colors.black, width: 2.0),
                     ),
                   ),
@@ -373,7 +303,8 @@ class _HomePageState extends State<HomePage> {
 class AudioRecognize extends StatefulWidget {
   final bool startImmediately;
 
-  const AudioRecognize({Key? key, this.startImmediately = false}) : super(key: key);
+  const AudioRecognize({Key? key, this.startImmediately = false})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AudioRecognizeState();
@@ -415,10 +346,10 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     _recordingDataController = StreamController<Food>();
     _recordingDataSubscription =
         _recordingDataController?.stream.listen((buffer) {
-          if (buffer is FoodData) {
-            _audioStream!.add(buffer.data!);
-          }
-        });
+      if (buffer is FoodData) {
+        _audioStream!.add(buffer.data!);
+      }
+    });
 
     setState(() {
       recognizing = true;
@@ -447,7 +378,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     responseStream.listen((data) {
       if (data.results.first.isFinal) {
         final currentText =
-        data.results.map((e) => e.alternatives.first.transcript).join('\n');
+            data.results.map((e) => e.alternatives.first.transcript).join('\n');
 
         responseText += responseText.isEmpty ? currentText : '\n' + currentText;
         setState(() {
@@ -473,37 +404,118 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(
-      encoding: AudioEncoding.LINEAR16,
-      model: RecognitionModel.command_and_search,
-      enableAutomaticPunctuation: true,
-      sampleRateHertz: 16000,
-      languageCode: 'en-US',
-      speechContexts: [SpeechContext(["AMRAP", "EMOM", "WOD", "Metcon", "PR", "RX", "deadlift",
-        "plank hold", "calorie row", "box jump", "wall-ball", "burpee",
-        "Clean and jerk", "Snatch", "double-under", "kipping", "Thruster",
-        "Muscle-up", "handstand push-ups", "toes-to-bar", "kettlebell swing",
-        "Fran", "Cindy", "Murph", "Lynne", "bench press", "pull-up", "round",
-        "rep", "max reps", "body weight", "Angie", "Barbara", "Chelsea", "Diane",
-        "Elizabeth", "Grace", "Helen", "Isabel", "Jackie", "Karen", "Linda", "Mary",
-        "Nancy", "Annie", "Eva", "Kelly", "Nicole", "Amanda", "Gwen", "Marguerita",
-        "Candy", "Maggie", "Hope", "Grettel", "Ingrid", "Barbara Ann", "Lyla",
-        "Ellen", "Andi", "Lane", "clean and jerks", "snatches", "thrusters",
-        "sumo deadlift high pulls", "front squats", "hang power snatches",
-        "push presses", "handstand push-ups", "one-legged squats", "burpees over the bar",
-        "bodyweight clean and jerks", "dumbbell snatches", "dumbbell thrusters",
-        "for time", "rounds for time", "reps for time", "complete as many rounds as possible",
-        "every minute on the minute", "max reps", "rest precisely", "body-weight",
-        "same load", "rotate", "score", "single dumbbell", "pair", "single-arm",
-        "double-arm", "alternating legs", "touch and go", "no dumping", "re-grip",
-        "foul"])
-      ]
-  );
+          encoding: AudioEncoding.LINEAR16,
+          model: RecognitionModel.command_and_search,
+          enableAutomaticPunctuation: true,
+          sampleRateHertz: 16000,
+          languageCode: 'en-US',
+          speechContexts: [
+            SpeechContext([
+              "AMRAP",
+              "EMOM",
+              "WOD",
+              "Metcon",
+              "PR",
+              "RX",
+              "deadlift",
+              "plank hold",
+              "calorie row",
+              "box jump",
+              "wall-ball",
+              "burpee",
+              "Clean and jerk",
+              "Snatch",
+              "double-under",
+              "kipping",
+              "Thruster",
+              "Muscle-up",
+              "handstand push-ups",
+              "toes-to-bar",
+              "kettlebell swing",
+              "Fran",
+              "Cindy",
+              "Murph",
+              "Lynne",
+              "bench press",
+              "pull-up",
+              "round",
+              "rep",
+              "max reps",
+              "body weight",
+              "Angie",
+              "Barbara",
+              "Chelsea",
+              "Diane",
+              "Elizabeth",
+              "Grace",
+              "Helen",
+              "Isabel",
+              "Jackie",
+              "Karen",
+              "Linda",
+              "Mary",
+              "Nancy",
+              "Annie",
+              "Eva",
+              "Kelly",
+              "Nicole",
+              "Amanda",
+              "Gwen",
+              "Marguerita",
+              "Candy",
+              "Maggie",
+              "Hope",
+              "Grettel",
+              "Ingrid",
+              "Barbara Ann",
+              "Lyla",
+              "Ellen",
+              "Andi",
+              "Lane",
+              "clean and jerks",
+              "snatches",
+              "thrusters",
+              "sumo deadlift high pulls",
+              "front squats",
+              "hang power snatches",
+              "push presses",
+              "handstand push-ups",
+              "one-legged squats",
+              "burpees over the bar",
+              "bodyweight clean and jerks",
+              "dumbbell snatches",
+              "dumbbell thrusters",
+              "for time",
+              "rounds for time",
+              "reps for time",
+              "complete as many rounds as possible",
+              "every minute on the minute",
+              "max reps",
+              "rest precisely",
+              "body-weight",
+              "same load",
+              "rotate",
+              "score",
+              "single dumbbell",
+              "pair",
+              "single-arm",
+              "double-arm",
+              "alternating legs",
+              "touch and go",
+              "no dumping",
+              "re-grip",
+              "foul"
+            ])
+          ]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: recognizing ? const Text('Recording...') : const Text('Results'),
+        title: recognizing
+            ? const Text('Recording...')
+            : Text('Results',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: Stack(
@@ -513,7 +525,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                 if (recognizing)
                   LinearProgressIndicator(
                     backgroundColor: Color(0xFFD2DCEA),
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFB84F52)),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFFB84F52)),
                   ),
                 Expanded(
                   child: Center(
@@ -522,8 +535,9 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: const Text(
-                            'Your Spoken Workout Log:',
+                          child: Text(
+                            DateFormat('EEEE yyMMdd').format(DateTime.now()),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         if (recognizeFinished)
@@ -536,28 +550,72 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                 ),
               ],
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: FloatingActionButton.extended(
-                  onPressed: recognizing ? stopRecording : streamingRecognize,
-                  label: Text(recognizing ? 'Stop' : 'Start Voice Log', style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold)),
-                  icon: Icon(recognizing ? Icons.stop : Icons.mic, color: Colors.black,),
-                  backgroundColor: Color(0xFFEA8176),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1.0),
-                    side: BorderSide(color: Colors.black, width: 2.0),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Color(0xFFE8E2CA),
+        child: recognizing
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FilledButton(
+                  child: Icon(Icons.stop, color: Colors.black),
+                  onPressed: stopRecording,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                        side: BorderSide(width: 2.0),
+                      ),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(12.0),
+                  ),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    FloatingActionButton(
+                      child: Icon(Icons.history, color: Colors.black),
+                      backgroundColor: Color(0xFFD2DCEA),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.black, width: 2.0),
+                      ),
+                      onPressed: () {
+                        // Add your history function here
+                      },
+                    ),
+                    FloatingActionButton.large(
+                      child: Icon(Icons.mic, color: Colors.black),
+                      backgroundColor: Color(0xFFCF8E88),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.black, width: 2.0),
+                      ),
+                      onPressed: () {
+                        try {
+                          streamingRecognize();
+                        } catch (e) {
+                          print('Error: $e');
+                        }
+                      },
+                    ),
+                    FloatingActionButton.small(
+                      backgroundColor: Color(0xFFD2DCEA),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.black, width: 2.0),
+                      ),
+                      child: Icon(Icons.keyboard, color: Colors.black),
+                      onPressed: () {
+                        // Add your keyboard function here
+                      },
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -597,40 +655,40 @@ class _WarmupState extends State<Warmup> {
   int warmupNumber = 0;
   final List<String> warmups = [
     'Barbell Complex Warm-Up\n' +
-        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
+        '\u2022 Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
+        '\u2022 Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch',
     'Rings Complex Warm-Up\n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
-        '* Tuck to inverted hang, then skin the cat\n' +
-        '* Pike to inverted hang, then skin the cat\n' +
-        '* Strict muscle-up to support to L-sit\n' +
-        '* Shoulder stand back to L-support or straddle support\n' +
-        '* Forward roll back to L-support\n' +
-        '* Forward roll to hang\n' +
-        '*  Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang\n' +
-        '* Front-lever attempt\n' +
-        '* Ring swings\n' +
-        '* Fly-away dismount (skin the cat and let go)',
+        '\u2022 Tuck to inverted hang, then skin the cat\n' +
+        '\u2022 Pike to inverted hang, then skin the cat\n' +
+        '\u2022 Strict muscle-up to support to L-sit\n' +
+        '\u2022 Shoulder stand back to L-support or straddle support\n' +
+        '\u2022 Forward roll back to L-support\n' +
+        '\u2022 Forward roll to hang\n' +
+        '\u2022  Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang\n' +
+        '\u2022 Front-lever attempt\n' +
+        '\u2022 Ring swings\n' +
+        '\u2022 Fly-away dismount (skin the cat and let go)',
     'Basic Body Weight (BBW) Complex Warm-Up\n' +
-        '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension\n' +
-        '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension\n'
-            '* Round 4: Pose running drill',
+        '\u2022 Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension\n' +
+        '\u2022 Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension\n'
+            '\u2022 Round 4: Pose running drill',
     'Dumbbell Complex Warm-Up\n' +
         '(Performed with two dumbbells at a time)\n' +
-        '* Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
+        '\u2022 Round 1: Deadlift, Hang power clean, Front squat, Press, Thruster\n' +
         '(Performed with one dumbbell at a time)\n' +
-        '* Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up',
+        '\u2022 Round 2: Deadlift, Hang power snatch, Overhead squat, Snatch, Turkish get-up',
     'Parallettes Complex Warm-Up\n' +
         '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
-        '* Push-up/dive bomber push-up\n' +
-        '* Shoot-through to push-up to frog stand\n' +
-        '* L-sit pass-through to tuck planche\n' +
-        '* L-sit pass-through to shoulder stand\n' +
-        '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
-        '* Handstand pirouette walk',
+        '\u2022 Push-up/dive bomber push-up\n' +
+        '\u2022 Shoot-through to push-up to frog stand\n' +
+        '\u2022 L-sit pass-through to tuck planche\n' +
+        '\u2022 L-sit pass-through to shoulder stand\n' +
+        '\u2022 Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
+        '\u2022 Handstand pirouette walk',
     'Kettlebell Complex Warm-Up\n' +
         '(Can be performed with one or both kettlebells or with hand-to-hand techniques)\n' +
-        '* Swing, Clean, Clean and press, Snatch, Turkish get-up'
+        '\u2022 Swing, Clean, Clean and press, Snatch, Turkish get-up'
   ];
 
   Widget displayImages() {
@@ -651,22 +709,24 @@ class _WarmupState extends State<Warmup> {
     List<String> lines = text.split('\n');
     List<InlineSpan> spans = [];
     for (String line in lines) {
-      if (line.startsWith('*')) {
+      if (line.startsWith('\u2022')) {
         spans.add(TextSpan(
             text: '\u2022',
-            style: TextStyle(fontWeight: FontWeight.bold, height: 1.5, fontFamily: 'Klee One')));
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith()));
 
         // Check for the identifiers and remove them from the line
         bool displayDumbbellImages = line.contains('[ID:DB_IMAGES]');
         bool displayBarbellImages = line.contains('[ID:BB_IMAGES]');
         bool displayDumbbell2Images = line.contains('[ID:DB_IMAGES_2]');
         bool displayBarbell2Images = line.contains('[ID:BB_IMAGES_2]');
-        line = line.replaceAll('[ID:DB_IMAGES]', '').replaceAll('[ID:BB_IMAGES]', '');
-        line = line.replaceAll('[ID:DB_IMAGES_2]', '').replaceAll('[ID:BB_IMAGES_2]', '');
+        line = line
+            .replaceAll('[ID:DB_IMAGES]', '')
+            .replaceAll('[ID:BB_IMAGES]', '');
+        line = line
+            .replaceAll('[ID:DB_IMAGES_2]', '')
+            .replaceAll('[ID:BB_IMAGES_2]', '');
 
-        spans.add(TextSpan(
-            text: line.substring(1),
-            style: TextStyle(height: 1.5, fontSize: 20.0, color: Colors.black, fontFamily: 'Klee One')));
+        spans.add(TextSpan(text: line.substring(1),));
 
         if (displayDumbbellImages) {
           List<String> imageList = [
@@ -676,7 +736,8 @@ class _WarmupState extends State<Warmup> {
             'images/dumbbellpress.jpg',
             'images/dumbbelloverheadsquat.jpg',
           ];
-          spans.add(WidgetSpan(child: CarouselSlider(
+          spans.add(WidgetSpan(
+              child: CarouselSlider(
             options: CarouselOptions(
               height: 100.0,
               enableInfiniteScroll: false,
@@ -701,7 +762,8 @@ class _WarmupState extends State<Warmup> {
             'images/shoulderpress.jpg',
             'images/overheadsquat.jpg',
           ];
-          spans.add(WidgetSpan(child: CarouselSlider(
+          spans.add(WidgetSpan(
+              child: CarouselSlider(
             options: CarouselOptions(
               height: 100.0,
               enableInfiniteScroll: false,
@@ -726,7 +788,8 @@ class _WarmupState extends State<Warmup> {
             'images/sotspress.jpg',
             'images/snatchbalance.jpg',
           ];
-          spans.add(WidgetSpan(child: CarouselSlider(
+          spans.add(WidgetSpan(
+              child: CarouselSlider(
             options: CarouselOptions(
               height: 100.0,
               enableInfiniteScroll: false,
@@ -751,7 +814,8 @@ class _WarmupState extends State<Warmup> {
             'images/dumbbellsnatch.jpg',
             'images/dumbbellturkishgetup.jpg',
           ];
-          spans.add(WidgetSpan(child: CarouselSlider(
+          spans.add(WidgetSpan(
+              child: CarouselSlider(
             options: CarouselOptions(
               height: 100.0,
               enableInfiniteScroll: false,
@@ -769,17 +833,14 @@ class _WarmupState extends State<Warmup> {
             }).toList(),
           )));
         }
-      } else if (line.startsWith('(Can be performed') ||
-          line.startsWith('(Create a mini routine') ||
-          line.startsWith('(Performed with two dumbbells') ||
-          line.startsWith('(Performed with one dumbbell')) {
+      } else if (line.startsWith('(')) {
         spans.add(TextSpan(
             text: line,
-            style: TextStyle(fontStyle: FontStyle.italic, height: 1.5, fontFamily: 'Klee One')));
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic)));
       } else {
         spans.add(TextSpan(
             text: line,
-            style: TextStyle(height: 1.5, fontFamily: 'Klee One')));
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)));
       }
       spans.add(TextSpan(text: '\n'));
     }
@@ -787,46 +848,47 @@ class _WarmupState extends State<Warmup> {
   }
 
   void updateParagraphs() {
-    if (selectedMovementIndex == 2) { // index for overheadsquat.jpg
+    if (selectedMovementIndex == 2) {
+      // index for overheadsquat.jpg
       warmups[0] = 'Barbell Complex Warm-Up for Overhead Squat\n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:BB_IMAGES]\n' +
-          '* Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance[ID:BB_IMAGES_2]';
+          '\u2022 Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:BB_IMAGES]\n' +
+          '\u2022 Round 2: Deadlift, Hang power snatch, Overhead squat (with pause), Sots press, Snatch balance[ID:BB_IMAGES_2]';
       warmups[1] = 'Rings Complex Warm-Up for Overhead Squat \n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.) \n' +
-          '* Tuck to inverted hang, then skin the cat \n' +
-          '* Pike to inverted hang, then skin the cat \n' +
-          '* Strict muscle-up to support to L-sit \n' +
-          '* Shoulder stand back to L-support or straddle support \n' +
-          '* Forward roll back to L-support \n' +
-          '* Forward roll to hang \n' +
-          '* Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
-          '* Front-lever attempt \n' +
-          '* False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
-          '* Ring swings with an emphasis on maintaining a strong overhead position during the swing';
+          '\u2022 Tuck to inverted hang, then skin the cat \n' +
+          '\u2022 Pike to inverted hang, then skin the cat \n' +
+          '\u2022 Strict muscle-up to support to L-sit \n' +
+          '\u2022 Shoulder stand back to L-support or straddle support \n' +
+          '\u2022 Forward roll back to L-support \n' +
+          '\u2022 Forward roll to hang \n' +
+          '\u2022 Pike or tuck to inverted hang to back-lever attempt, pull back to inverted hang \n' +
+          '\u2022 Front-lever attempt \n' +
+          '\u2022 False grip hang with active shoulders (to improve grip strength and stability for overhead movements) \n' +
+          '\u2022 Ring swings with an emphasis on maintaining a strong overhead position during the swing';
       warmups[2] = 'Basic Body Weight (BBW) Complex Warm-Up for Overhead Squat\n' +
-          '* Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
-          '* Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control)\n' +
-          '* Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
+          '\u2022 Round 1: Squat, Push-up, Sit-up, Pull-up (strict), Hip extension, Overhead squat with PVC pipe or broomstick \n' +
+          '\u2022 Round 2: Lunge, Dip (strict), V-up, Kipping pull-up, Back extension, Overhead squat with PVC pipe or broomstick (focus on improving mobility and control)\n' +
+          '\u2022 Round 3: Pistol, Handstand push-up, Toes-to-bar (straight leg and strict), Muscle-up (strict), Hip and back extension, Overhead squat with PVC pipe or broomstick (add a pause at the bottom for stability)';
       warmups[3] = 'Dumbbell Complex Warm-Up for Overhead Squat\n' +
           '(Performed with two dumbbells at a time)\n' +
-          '* Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:DB_IMAGES]\n' +
+          '\u2022 Round 1: Deadlift, Hang power clean, Front squat, Press, Overhead squat[ID:DB_IMAGES]\n' +
           '(Performed with one dumbbell at a time)\n' +
-          '* Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up[ID:DB_IMAGES_2]';
+          '\u2022 Round 2: Deadlift, Hang power snatch, Single-arm overhead squat, Snatch, Turkish get-up[ID:DB_IMAGES_2]';
       warmups[4] = 'Parallettes Complex Warm-Up for Overhead Squat\n' +
           '(Create a mini routine by going through the list. Omit the more difficult variations until skilled enough.)\n' +
-          '* Push-up/dive bomber push-up\n' +
-          '* Shoot-through to push-up to frog stand\n' +
-          '* L-sit pass-through to tuck planche\n' +
-          '* L-sit pass-through to shoulder stand\n' +
-          '* Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
-          '* Handstand pirouette walk\n' +
-          '* Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds)\n' +
-          '* Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability)\n' +
-          '* Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
+          '\u2022 Push-up/dive bomber push-up\n' +
+          '\u2022 Shoot-through to push-up to frog stand\n' +
+          '\u2022 L-sit pass-through to tuck planche\n' +
+          '\u2022 L-sit pass-through to shoulder stand\n' +
+          '\u2022 Tuck up to handstand/press to handstand (from L or press from bottom of shoulder stand)\n' +
+          '\u2022 Handstand pirouette walk\n' +
+          '\u2022 Handstand holds with focus on overhead stability and shoulder activation (hold for 15-30 seconds)\n' +
+          '\u2022 Handstand push-up with a narrow grip (to target shoulder and triceps strength, which are important for overhead squat stability)\n' +
+          '\u2022 Handstand shoulder shrugs (to improve shoulder stability and scapular control)';
       warmups[5] = 'Kettlebell Complex Warm-Up for Overhead Squat\n' +
           '(Can be performed with one or both kettlebells or with hand-to-hand techniques)\n' +
-          '* Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat\n' +
-          '* Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
+          '\u2022 Round 1: Swing, Goblet squat, Clean, Press, Single-arm overhead squat\n' +
+          '\u2022 Round 2: Swing, Clean, Clean and press, Snatch, Turkish get-up';
     }
   }
 
@@ -850,11 +912,12 @@ class _WarmupState extends State<Warmup> {
             // Add this line to set the controller for the SingleChildScrollView
             controller: _warmupScrollController,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: RichText(
                 text: TextSpan(
-                  children: parseText(warmups[warmupNumber]),
-                  style: TextStyle(fontSize: 20.0, color: Colors.black),
+                    children: parseText(warmups[warmupNumber]),
+                    style: Theme.of(context).textTheme.bodySmall
                 ),
               ),
             ),
@@ -892,39 +955,30 @@ class WeaknessAssessmentPage extends StatelessWidget {
       'Ball Clean',
     ];
 
-    double screenWidth = MediaQuery.of(context).size.width;
-    double titleFontSize = screenWidth < 350 ? 16.0 : 18.0;
-
     return DefaultTabController(
-      length: 3, // Update the length to 3
+      length: 2, // Update the length to 3
       child: Scaffold(
         backgroundColor: Color(0xFFE8E2CA),
         appBar: AppBar(
           backgroundColor: Color(0xFF759E80),
-          title: Text(
-            'Assess Weaknesses',
-            maxLines: 2,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
+          title: Text('Assess Weaknesses',
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           iconTheme: IconThemeData(color: Colors.black),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
-              color: Color(0xFFB84F52),
+              color: Color(0xFFA3424B),
               child: TabBar(
                 indicatorColor: Colors.white,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.black,
-                labelStyle: TextStyle(fontSize: 12.0),
+                labelStyle: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 tabs: [
                   Tab(
                     icon: Icon(Icons.foundation),
                     text: 'Movements',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.hexagon_outlined),
-                    text: 'Domains',
                   ),
                   Tab(
                     icon: Icon(Icons.videocam), // Add the videocam icon
@@ -950,8 +1004,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         'Accelerate progress with tailored warm-ups to improve your weakest movement',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -960,12 +1013,14 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           itemCount: imageNames.length,
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             childAspectRatio: 0.6,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            bool disabled = imageNames[index] != 'overheadsquat.jpg';
+                            bool disabled =
+                                imageNames[index] != 'overheadsquat.jpg';
 
                             return Padding(
                               padding: const EdgeInsets.all(4.0),
@@ -973,8 +1028,8 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                 onTap: disabled
                                     ? null
                                     : () {
-                                  Navigator.pop(context, index);
-                                },
+                                        Navigator.pop(context, index);
+                                      },
                                 child: Column(
                                   children: [
                                     AspectRatio(
@@ -985,11 +1040,17 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                           children: [
                                             Align(
                                               alignment: Alignment.center,
-                                              child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                              child: Image.asset(
+                                                  'images/${imageNames[index]}',
+                                                  fit: BoxFit.scaleDown),
                                             ),
                                             if (disabled)
                                               Container(
-                                                color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                                color: Color.fromRGBO(
+                                                    128,
+                                                    128,
+                                                    128,
+                                                    0.5), // semi-transparent grey color
                                               ),
                                             if (disabled)
                                               Icon(
@@ -1003,11 +1064,9 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 1.0),
-                                      child: Text(
-                                        movementNames[index],
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12.0),
-                                      ),
+                                      child: Text(movementNames[index],
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context).textTheme.labelSmall),
                                     ),
                                   ],
                                 ),
@@ -1021,8 +1080,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Center(
                         child: InkWell(
-                          onTap: () {
-                          },
+                          onTap: () {},
                           child: Chip(
                             elevation: 10.0,
                             label: Text(
@@ -1049,71 +1107,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
               ),
             ),
 
-            // Domains view
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  // Add the title
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      'Accelerate progress with tailored warm-ups to improve your weak fitness domains',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  Center(
-                    child: Stack(
-                      children: [
-                        ColorFiltered(
-                          colorFilter: ColorFilter.mode(
-                            Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
-                            BlendMode.modulate, // Use BlendMode.modulate instead
-                          ),
-                          child: Image.asset('images/decagon.png', fit: BoxFit.scaleDown),
-                        ),
-                        Positioned(
-                          top: 4.0,
-                          left: 4.0,
-                          child: Icon(
-                            Icons.lock,
-                            size: 24.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 24.0),
-                  InkWell(
-                    onTap: () {
-                      // Add your action here
-                    },
-                    child: Chip(
-                      elevation: 10.0,
-                      label: Text(
-                        '¥100',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                      avatar: InkWell(
-                        child: Icon(Icons.key),
-                      ),
-                      backgroundColor: Color(0xFFD2DCEA),
-                      padding: EdgeInsets.all(4.0),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black, width: 2),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Correcting view
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -1126,8 +1119,7 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         'Upload a video to identify and assess movement faults to correct mechanics',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -1136,12 +1128,14 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           itemCount: imageNames.length,
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             childAspectRatio: 0.6,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            bool disabled = imageNames[index] != 'overheadsquat.jpg';
+                            bool disabled =
+                                imageNames[index] != 'overheadsquat.jpg';
 
                             return Padding(
                               padding: const EdgeInsets.all(4.0),
@@ -1149,16 +1143,18 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                 onTap: disabled
                                     ? null
                                     : () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ExpandedCardScreen(
-                                        imageName: imageNames[index],
-                                        movementName: movementNames[index],
-                                      ),
-                                    ),
-                                  );
-                                },
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ExpandedCardScreen(
+                                              imageName: imageNames[index],
+                                              movementName:
+                                                  movementNames[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
                                 child: Column(
                                   children: [
                                     AspectRatio(
@@ -1171,11 +1167,17 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                             children: [
                                               Align(
                                                 alignment: Alignment.center,
-                                                child: Image.asset('images/${imageNames[index]}', fit: BoxFit.scaleDown),
+                                                child: Image.asset(
+                                                    'images/${imageNames[index]}',
+                                                    fit: BoxFit.scaleDown),
                                               ),
                                               if (disabled)
                                                 Container(
-                                                  color: Color.fromRGBO(128, 128, 128, 0.5), // semi-transparent grey color
+                                                  color: Color.fromRGBO(
+                                                      128,
+                                                      128,
+                                                      128,
+                                                      0.5), // semi-transparent grey color
                                                 ),
                                               if (disabled)
                                                 Icon(
@@ -1190,11 +1192,9 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 1.0),
-                                      child: Text(
-                                        movementNames[index],
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 12.0),
-                                      ),
+                                      child: Text(movementNames[index],
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context).textTheme.labelSmall),
                                     ),
                                   ],
                                 ),
@@ -1231,7 +1231,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -1254,9 +1253,10 @@ class _ExpandedCardScreenState extends State<ExpandedCardScreen> {
   ChewieController? _chewieController;
 
   Future<void> _pickVideo() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.video);
 
-    if(result != null) {
+    if (result != null) {
       File file = File(result.files.single.path!);
 
       setState(() {

@@ -14,6 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
@@ -320,10 +321,27 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   BehaviorSubject<List<int>>? _audioStream;
   StreamController<Food>? _recordingDataController;
   StreamSubscription? _recordingDataSubscription;
+  TextEditingController _textEditingController = TextEditingController();
+
+  Future<void> saveLogs(String text) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('audioLogs', text);
+  }
+
+  Future<String> loadLogs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String text = prefs.getString('audioLogs') ?? '';
+    return text;
+  }
 
   @override
   void initState() {
     super.initState();
+    loadLogs().then((savedText) {
+      setState(() {
+        text = savedText;
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.startImmediately) {
         startRecording();
@@ -378,11 +396,12 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     responseStream.listen((data) {
       if (data.results.first.isFinal) {
         final currentText =
-            data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        data.results.map((e) => e.alternatives.first.transcript).join('\n');
 
         responseText += responseText.isEmpty ? currentText : '\n' + currentText;
         setState(() {
-          text = responseText;
+          text = responseText;  // update here
+          _textEditingController.text = responseText;  // update here
           recognizeFinished = true;
         });
       }
@@ -541,9 +560,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                           ),
                         ),
                         if (recognizeFinished)
-                          _RecognizeContent(
-                            text: text,
-                          ),
+                          _RecognizeContent(textController: _textEditingController),
                       ],
                     ),
                   ),
@@ -622,19 +639,39 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 }
 
 class _RecognizeContent extends StatelessWidget {
-  final String text;
+  final TextEditingController textController;
 
-  const _RecognizeContent({Key? key, required this.text}) : super(key: key);
+  const _RecognizeContent({Key? key, required this.textController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        padding: const EdgeInsets.all(2.0),
-        color: Color(0xFFF4F1E6), // background color
-        child: Text(
-          text,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(2.0),
+          color: Color(0xFFF4F1E6), // background color
+          child: TextField(
+            controller: textController,
+            maxLines: null,
+            textInputAction: TextInputAction.done,
+            onChanged: (value) {
+              // The textController is updated automatically
+            },
+            onSubmitted: (value) {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+          ),
         ),
       ),
     );

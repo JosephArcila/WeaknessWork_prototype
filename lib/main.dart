@@ -596,11 +596,11 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    FloatingActionButton(
+                    OutlinedButton(
                       child: Icon(Icons.history, color: Colors.black),
-                      backgroundColor: Color(0xFFD2DCEA),
-                      shape: RoundedRectangleBorder(
+                      style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.black, width: 2.0),
+                        shape: RoundedRectangleBorder(),
                       ),
                       onPressed: () {
                         // Add your history function here
@@ -620,7 +620,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         }
                       },
                     ),
-                    FloatingActionButton.small(
+                    FloatingActionButton(
                       backgroundColor: Color(0xFFD2DCEA),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.black, width: 2.0),
@@ -1113,32 +1113,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Center(
-                        child: InkWell(
-                          onTap: () {},
-                          child: Chip(
-                            elevation: 10.0,
-                            label: Text(
-                              '¥100',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            avatar: InkWell(
-                              child: Icon(Icons.key),
-                            ),
-                            backgroundColor: Color(0xFFD2DCEA),
-                            padding: EdgeInsets.all(4.0),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.black, width: 2),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -1240,29 +1214,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
                           },
                         ),
                       ],
-                    ),
-                    InkWell(
-                      onTap: () {
-                        // Add your action here
-                      },
-                      child: Chip(
-                        elevation: 10.0,
-                        label: Text(
-                          '¥500',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                        ),
-                        avatar: InkWell(
-                          child: Icon(Icons.key),
-                        ),
-                        backgroundColor: Color(0xFFD2DCEA),
-                        padding: EdgeInsets.all(4.0),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.black, width: 2),
-                        ),
-                      ),
                     ),
                   ],
                 ),

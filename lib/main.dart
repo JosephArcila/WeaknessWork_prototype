@@ -555,6 +555,21 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            onChanged: (value) {
+                              // Perform your search operation here
+                            },
+                            decoration: InputDecoration(
+                              labelText: 'Search',
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             DateFormat('EEEE yyMMdd').format(DateTime.now()),
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -621,17 +636,21 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         }
                       },
                     ),
-                    FloatingActionButton(
-                      heroTag: "keyboardButton",
-                      backgroundColor: Color(0xFFD2DCEA),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black, width: 2.0),
-                      ),
-                      child: Icon(Icons.keyboard, color: Colors.black),
+                    FilledButton(
                       onPressed: () {
-                        // Add your keyboard function here
+                        // Add your save function here
                       },
-                    ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
+                        side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      child: const Icon(Icons.note_add, color: Colors.black),
+                    )
                   ],
                 ),
               ),

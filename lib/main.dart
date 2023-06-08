@@ -238,6 +238,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   FloatingActionButton.small(
+                    heroTag: "appInfoButton",
                     backgroundColor: Color(0xFFD2DCEA),
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.black, width: 2.0),
@@ -248,6 +249,7 @@ class _HomePageState extends State<HomePage> {
                     child: Icon(Icons.info_outline, color: Colors.black),
                   ),
                   FloatingActionButton.extended(
+                    heroTag: "resutsButton",
                     icon: Icon(
                       Icons.score,
                       color: Colors.black,
@@ -264,7 +266,6 @@ class _HomePageState extends State<HomePage> {
                             builder: (context) => AudioRecognize()),
                       );
                     },
-                    heroTag: "micButton",
                     backgroundColor: Color(0xFFCF8E88),
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.black, width: 2.0),
@@ -607,6 +608,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       },
                     ),
                     FloatingActionButton.large(
+                      heroTag: "micButton",
                       child: Icon(Icons.mic, color: Colors.black),
                       backgroundColor: Color(0xFFCF8E88),
                       shape: RoundedRectangleBorder(
@@ -621,6 +623,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       },
                     ),
                     FloatingActionButton(
+                      heroTag: "keyboardButton",
                       backgroundColor: Color(0xFFD2DCEA),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.black, width: 2.0),

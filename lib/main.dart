@@ -560,8 +560,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        if (recognizeFinished)
-                          _RecognizeContent(textController: _textEditingController),
+                        _RecognizeContent(textController: _textEditingController),
                       ],
                     ),
                   ),

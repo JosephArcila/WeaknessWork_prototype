@@ -238,15 +238,25 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   FloatingActionButton.small(
-                    heroTag: "appInfoButton",
+                    heroTag: "weaknessAssessmentButton", // Add unique tag here
+                    onPressed: () async {
+                      int result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WeaknessAssessmentPage()),
+                      );
+                      setState(() {
+                        _warmupState?.selectedMovementIndex = result;
+                      });
+                    },
+                    child: Icon(
+                      MaterialSymbols.conditions,
+                      color: Colors.black,
+                    ),
                     backgroundColor: Color(0xFFD2DCEA),
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.black, width: 2.0),
                     ),
-                    onPressed: () {
-                      _showAppInfoModalBottomSheet(context);
-                    },
-                    child: Icon(Icons.info_outline, color: Colors.black),
                   ),
                   FloatingActionButton.extended(
                     heroTag: "resutsButton",
@@ -271,26 +281,11 @@ class _HomePageState extends State<HomePage> {
                       side: BorderSide(color: Colors.black, width: 2.0),
                     ),
                   ),
-                  FloatingActionButton.small(
-                    heroTag: "weaknessAssessmentButton", // Add unique tag here
-                    onPressed: () async {
-                      int result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WeaknessAssessmentPage()),
-                      );
-                      setState(() {
-                        _warmupState?.selectedMovementIndex = result;
-                      });
+                  TextButton(
+                    onPressed: () {
+                      _showAppInfoModalBottomSheet(context);
                     },
-                    child: Icon(
-                      MaterialSymbols.conditions,
-                      color: Colors.black,
-                    ),
-                    backgroundColor: Color(0xFFD2DCEA),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.black, width: 2.0),
-                    ),
+                    child: Icon(Icons.info_outline, color: Colors.black),
                   ),
                 ],
               ),

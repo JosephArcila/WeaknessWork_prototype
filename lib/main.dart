@@ -25,16 +25,6 @@ class WeaknessWorkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WeaknessWork',
-      theme: ThemeData(
-        fontFamily: 'Klee One',
-        primaryColor: Color(0xFF759E80),
-        canvasColor: Color(0xFFE8E2CA),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF759E80),
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
-      ),
       home: HomePage(),
     );
   }
@@ -204,11 +194,12 @@ class _HomePageState extends State<HomePage> {
       theme: ThemeData(
         fontFamily: 'Klee One',
         primaryColor: Color(0xFF759E80),
-        canvasColor: Color(0xFFE8E2CA), // Add this line to change the default Material color
+        canvasColor: Color(0xFFE8E2CA),
         appBarTheme: AppBarTheme(
           backgroundColor: Color(0xFF759E80),
           iconTheme: IconThemeData(color: Colors.black),
         ),
+        colorScheme: ColorScheme.light().copyWith(primary: Color(0xFFA3424B)), // Add this line to change the default primary color
       ),
       home: Builder(
         builder: (context) => Scaffold(
@@ -230,7 +221,7 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Color(0xFF759E80),
           ),
           body:
-              Warmup(warmupKey: _warmupStateKey), // Pass the key to WarmupPage
+              Warmup(warmupKey: _warmupStateKey),
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -302,6 +293,18 @@ class AudioRecognize extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _AudioRecognizeState();
+}
+
+class _ClearButton extends StatelessWidget {
+  const _ClearButton({required this.controller});
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    icon: const Icon(Icons.clear),
+    onPressed: () => controller.clear(),
+  );
 }
 
 class _AudioRecognizeState extends State<AudioRecognize> {
@@ -546,22 +549,61 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: TextField(
-                            onChanged: (value) {
-                              // Perform your search operation here
-                            },
+                            controller: TextEditingController(),
                             decoration: InputDecoration(
-                              labelText: 'Search',
-                              prefixIcon: Icon(Icons.search),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: _ClearButton(controller: TextEditingController()),
+                              labelText: 'Search logs',
+                              filled: true,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Tuesday 230606",
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            height: 48,
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(2.0),
+                            color: Color(0xFFF4F1E6), // background color
+                            alignment: Alignment.centerLeft, // aligns the text vertically in the center and left horizontally
+                            child: Text("Tabata This, WRX, 200 reps"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Wednesday 230607",
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            height: 48,
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(2.0),
+                            color: Color(0xFFF4F1E6), // background color
+                            alignment: Alignment.centerLeft, // aligns the text vertically in the center and left horizontally
+                            child: Text("Hope, WRX, 174 reps"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
                           child: Text(
                             DateFormat('EEEE yyMMdd').format(DateTime.now()),
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -637,7 +679,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            borderRadius: BorderRadius.circular(0.0),
                           ),
                         ),
                       ),

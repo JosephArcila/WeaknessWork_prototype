@@ -307,9 +307,16 @@ class _ClearButton extends StatelessWidget {
   );
 }
 
-class _AudioRecognizeState extends State<AudioRecognize> {
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+class LogEntry {
+  final String text;
+  final DateTime date;
 
+  LogEntry(this.text, this.date);
+}
+
+class _AudioRecognizeState extends State<AudioRecognize> {
+  List<LogEntry> logs = [];
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
@@ -535,7 +542,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
       body: SafeArea(
         child: Stack(
           children: <Widget>[
-            Column(
+            ListView(
               children: <Widget>[
                 if (recognizing)
                   LinearProgressIndicator(
@@ -560,48 +567,63 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Tuesday 230606",
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                        for (var log in logs)
+                          Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  DateFormat('EEEE yyMMdd').format(log.date),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Container(
+                                  color: Color(0xFFF4F1E6),
+                                  child: Text(
+                                    log.text,
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ),
+                                trailing: PopupMenuButton<int>(
+                                  icon: Icon(Icons.more_horiz),
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 1,
+                                      child: Text(
+                                        "Edit",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 2,
+                                      child: Text(
+                                        "Delete",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ),
+                                  ],
+                                  onSelected: (value) {
+                                    if (value == 1) {
+                                      // Edit the ListTile...
+                                    } else if (value == 2) {
+                                      // Delete the ListTile...
+                                      setState(() {
+                                        logs.remove(log);
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              Divider(
+                                height: 25.0,
+                                thickness: 2.0,
+                                color: Color(0xFF759E80),
+                                indent: 20,
+                                endIndent: 20,
+                              ),
+                            ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Container(
-                            height: 48,
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(2.0),
-                            color: Color(0xFFF4F1E6), // background color
-                            alignment: Alignment.centerLeft, // aligns the text vertically in the center and left horizontally
-                            child: Text("Tabata This, WRX, 200 reps"),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Wednesday 230607",
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Container(
-                            height: 48,
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(2.0),
-                            color: Color(0xFFF4F1E6), // background color
-                            alignment: Alignment.centerLeft, // aligns the text vertically in the center and left horizontally
-                            child: Text("Hope, WRX, 174 reps"),
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
                           child: Text(
@@ -610,6 +632,24 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                           ),
                         ),
                         _RecognizeContent(textController: _textEditingController),
+                        FilledButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              logs.add(LogEntry(_textEditingController.text, DateTime.now()));
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
+                            side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0),
+                              ),
+                            ),
+                          ),
+                          icon: const Icon(Icons.note_add, color: Colors.black),
+                          label: Text("Save", style: TextStyle(color: Colors.black),)
+                        ),
                       ],
                     ),
                   ),
@@ -646,7 +686,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     OutlinedButton(
-                      child: Icon(Icons.history, color: Colors.black),
+                      child: Icon(Icons.search, color: Colors.black),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.black, width: 2.0),
                         shape: RoundedRectangleBorder(),
@@ -655,7 +695,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         // Add your history function here
                       },
                     ),
-                    FloatingActionButton.large(
+                    FloatingActionButton(
                       heroTag: "micButton",
                       child: Icon(Icons.mic, color: Colors.black),
                       backgroundColor: Color(0xFFCF8E88),
@@ -670,21 +710,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         }
                       },
                     ),
-                    FilledButton(
-                      onPressed: () {
-                        // Add your save function here
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
-                        side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0.0),
-                          ),
-                        ),
-                      ),
-                      child: const Icon(Icons.note_add, color: Colors.black),
-                    )
                   ],
                 ),
               ),
@@ -714,6 +739,7 @@ class _RecognizeContent extends StatelessWidget {
           padding: const EdgeInsets.all(2.0),
           color: Color(0xFFF4F1E6), // background color
           child: TextField(
+            style: Theme.of(context).textTheme.bodyMedium,
             controller: textController,
             maxLines: null,
             textInputAction: TextInputAction.done,

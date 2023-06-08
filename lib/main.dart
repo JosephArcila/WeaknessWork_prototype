@@ -237,8 +237,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FloatingActionButton.small(
-                    heroTag: "weaknessAssessmentButton", // Add unique tag here
+                  ElevatedButton(
                     onPressed: () async {
                       int result = await Navigator.push(
                         context,
@@ -249,14 +248,12 @@ class _HomePageState extends State<HomePage> {
                         _warmupState?.selectedMovementIndex = result;
                       });
                     },
-                    child: Icon(
-                      MaterialSymbols.conditions,
-                      color: Colors.black,
-                    ),
-                    backgroundColor: Color(0xFFD2DCEA),
-                    shape: RoundedRectangleBorder(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFD2DCEA),
                       side: BorderSide(color: Colors.black, width: 2.0),
+                      shape: RoundedRectangleBorder(),
                     ),
+                    child: Icon(MaterialSymbols.conditions, color: Colors.black),
                   ),
                   FloatingActionButton.extended(
                     heroTag: "resutsButton",

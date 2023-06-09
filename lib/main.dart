@@ -594,108 +594,106 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                     valueColor:
                         AlwaysStoppedAnimation<Color>(Color(0xFFB84F52)),
                   ),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextField(
-                            controller: TextEditingController(),
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.search),
-                              suffixIcon: _ClearButton(controller: TextEditingController()),
-                              labelText: 'Search logs',
-                              filled: true,
-                            ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: TextField(
+                          controller: TextEditingController(),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _ClearButton(controller: TextEditingController()),
+                            labelText: 'Search logs',
+                            filled: true,
                           ),
                         ),
-                        for (var log in logs)
-                          Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  DateFormat('EEEE yyMMdd').format(log.date),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      for (var log in logs)
+                        Column(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                DateFormat('EEEE yyMMdd').format(log.date),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Container(
+                                color: Color(0xFFF4F1E6),
+                                child: Text(
+                                  log.text,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
-                                subtitle: Container(
-                                  color: Color(0xFFF4F1E6),
-                                  child: Text(
-                                    log.text,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              trailing: PopupMenuButton<int>(
+                                icon: Icon(Icons.more_horiz),
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: 1,
+                                    child: Text(
+                                      "Edit",
+                                      style: Theme.of(context).textTheme.labelSmall,
+                                    ),
                                   ),
-                                ),
-                                trailing: PopupMenuButton<int>(
-                                  icon: Icon(Icons.more_horiz),
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: 1,
-                                      child: Text(
-                                        "Edit",
-                                        style: Theme.of(context).textTheme.labelSmall,
-                                      ),
+                                  PopupMenuItem(
+                                    value: 2,
+                                    child: Text(
+                                      "Delete",
+                                      style: Theme.of(context).textTheme.labelSmall,
                                     ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      child: Text(
-                                        "Delete",
-                                        style: Theme.of(context).textTheme.labelSmall,
-                                      ),
-                                    ),
-                                  ],
-                                  onSelected: (value) {
-                                    if (value == 1) {
-                                      // Edit the ListTile...
-                                    } else if (value == 2) {
-                                      // Delete the ListTile...
-                                      setState(() {
-                                        logs.remove(log);
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                              Divider(
-                                height: 25.0,
-                                thickness: 2.0,
-                                color: Color(0xFF759E80),
-                                indent: 20,
-                                endIndent: 20,
-                              ),
-                            ],
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
-                          child: Text(
-                            DateFormat('EEEE yyMMdd').format(DateTime.now()),
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        _RecognizeContent(textController: _textEditingController),
-                        FilledButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              logs.add(LogEntry(_textEditingController.text, DateTime.now()));
-                            });
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
-                            side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.0),
+                                  ),
+                                ],
+                                onSelected: (value) {
+                                  if (value == 1) {
+                                    // Edit the ListTile...
+                                  } else if (value == 2) {
+                                    // Delete the ListTile...
+                                    setState(() {
+                                      logs.remove(log);
+                                    });
+                                  }
+                                },
                               ),
                             ),
-                          ),
-                          icon: const Icon(Icons.note_add, color: Colors.black),
-                          label: Text("Save", style: TextStyle(color: Colors.black),)
+                            Divider(
+                              height: 25.0,
+                              thickness: 2.0,
+                              color: Color(0xFF759E80),
+                              indent: 20,
+                              endIndent: 20,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
+                        child: Text(
+                          DateFormat('EEEE yyMMdd').format(DateTime.now()),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      _RecognizeContent(textController: _textEditingController),
+                      FilledButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            logs.add(LogEntry(_textEditingController.text, DateTime.now()));
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
+                          side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0.0),
+                            ),
+                          ),
+                        ),
+                        icon: const Icon(Icons.note_add, color: Colors.black),
+                        label: Text("Save", style: TextStyle(color: Colors.black),)
+                      ),
+                    ],
                   ),
                 ),
               ],

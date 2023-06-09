@@ -15,6 +15,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
@@ -312,6 +313,28 @@ class LogEntry {
   final DateTime date;
 
   LogEntry(this.text, this.date);
+
+  // Convert a LogEntry object into a Map
+  Map<String, dynamic> toMap() {
+    return {
+      'text': text,
+      'date': date.toIso8601String(),
+    };
+  }
+
+  // Convert a Map into a LogEntry object
+  static LogEntry fromMap(Map<String, dynamic> map) {
+    return LogEntry(
+      map['text'],
+      DateTime.parse(map['date']),
+    );
+  }
+
+  // Convert a LogEntry object into a JSON string
+  String toJson() => json.encode(toMap());
+
+  // Convert a JSON string into a LogEntry object
+  static LogEntry fromJson(String source) => fromMap(json.decode(source));
 }
 
 class _AudioRecognizeState extends State<AudioRecognize> {
@@ -326,23 +349,25 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   StreamSubscription? _recordingDataSubscription;
   TextEditingController _textEditingController = TextEditingController();
 
-  Future<void> saveLogs(String text) async {
+  Future<void> saveLogs(List<LogEntry> logs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('audioLogs', text);
+    await prefs.setString('audioLogs', json.encode(logs.map((log) => log.toJson()).toList()));
   }
 
-  Future<String> loadLogs() async {
+  Future<List<LogEntry>> loadLogs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String text = prefs.getString('audioLogs') ?? '';
-    return text;
+    String jsonString = prefs.getString('audioLogs') ?? '[]';
+    List<dynamic> jsonList = json.decode(jsonString);
+    List<LogEntry> logs = jsonList.map((item) => LogEntry.fromJson(item)).toList();
+    return logs;
   }
 
   @override
   void initState() {
     super.initState();
-    loadLogs().then((savedText) {
+    loadLogs().then((savedLogs) {
       setState(() {
-        text = savedText;
+        logs = savedLogs;
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -350,6 +375,26 @@ class _AudioRecognizeState extends State<AudioRecognize> {
         startRecording();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    saveLogs(logs);  // Save the logs before the state is disposed of
+    super.dispose();
+  }
+
+  void addLog(LogEntry log) {
+    setState(() {
+      logs.add(log);
+    });
+    saveLogs(logs);
+  }
+
+  void removeLog(LogEntry log) {
+    setState(() {
+      logs.remove(log);
+    });
+    saveLogs(logs);
   }
 
   void startRecording() {
@@ -535,9 +580,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     return Scaffold(
       appBar: AppBar(
         title: recognizing
-            ? const Text('Recording...')
-            : Text('Results',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            ? Text('Recording...', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
+            : Text('Results', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: Stack(

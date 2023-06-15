@@ -16,17 +16,67 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
 
-void main() => runApp(WeaknessWorkApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(WeaknessWorkApp());
+}
 
 class WeaknessWorkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      title: 'WeaknessWork',
+      theme: ThemeData(
+        fontFamily: 'Klee One',
+        primaryColor: Color(0xFF759E80),
+        canvasColor: Color(0xFFE8E2CA),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF759E80),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+        colorScheme: ColorScheme.light().copyWith(primary: Color(0xFFA3424B)),
+      ),
+      initialRoute:
+          FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/',
+      routes: {
+        '/sign-in': (context) {
+          return SignInScreen(
+            providers: [
+              EmailAuthProvider(),
+            ],
+            actions: [
+              AuthStateChangeAction<SignedIn>((context, state) {
+                Navigator.pushReplacementNamed(context, '/');
+              }),
+            ],
+          );
+        },
+        '/profile': (context) {
+          return ProfileScreen(
+            providers: [
+              EmailAuthProvider(),
+            ],
+            actions: [
+              SignedOutAction((context) {
+                Navigator.pushReplacementNamed(context, '/sign-in');
+              }),
+            ],
+          );
+        },
+        '/': (context) => HomePage(),
+      },
     );
   }
 }
@@ -50,6 +100,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _listen();
     });
@@ -83,31 +134,33 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'General Warm-Ups to Address Weaknesses \n',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: '\u2022 Based on the CrossFit Training Level 2 Guide\n',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        TextSpan(
-                          text: '\u2022 Use them to add skill work by modality\n',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        TextSpan(
-                          text: '\u2022 Performed for 2-3 rounds, each more complicated\n',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        TextSpan(
-                          text: '\u2022 5-15 reps per movement',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                        style: Theme.of(context).textTheme.bodyMedium
-                    ),
+                    text: TextSpan(children: [
+                      TextSpan(
+                        text: 'General Warm-Ups to Address Weaknesses \n',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text:
+                            '\u2022 Based on the CrossFit Training Level 2 Guide\n',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      TextSpan(
+                        text: '\u2022 Use them to add skill work by modality\n',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      TextSpan(
+                        text:
+                            '\u2022 Performed for 2-3 rounds, each more complicated\n',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      TextSpan(
+                        text: '\u2022 5-15 reps per movement',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ], style: Theme.of(context).textTheme.bodyMedium),
                   ),
                   SizedBox(height: 8.0),
                   RichText(
@@ -115,11 +168,17 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         TextSpan(
                           text: 'Voice Command Guide \n',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
                           text: 'All right record: ',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
                           text: 'Starts recording the workout result.\n',
@@ -190,95 +249,93 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WeaknessWork',
-      theme: ThemeData(
-        fontFamily: 'Klee One',
-        primaryColor: Color(0xFF759E80),
-        canvasColor: Color(0xFFE8E2CA),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF759E80),
-          iconTheme: IconThemeData(color: Colors.black),
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Color(0xFFE8E2CA),
+      appBar: AppBar(
+        title: Container(
+          padding: EdgeInsets.all(5.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Color(0xFFA3424B)),
+          child: RichText(
+            text: TextSpan(
+              text: 'WeaknessWork',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+          ),
         ),
-        colorScheme: ColorScheme.light().copyWith(primary: Color(0xFFA3424B)), // Add this line to change the default primary color
+        backgroundColor: Color(0xFF759E80),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.account_circle),
+            onPressed: () {
+              if (FirebaseAuth.instance.currentUser != null) {
+                Navigator.pushNamed(context, '/profile');
+              } else {
+                Navigator.pushNamed(context, '/sign-in');
+              }
+            },
+          ),
+        ],
       ),
-      home: Builder(
-        builder: (context) => Scaffold(
-          key: _scaffoldKey, // assign the key here
-          backgroundColor: Color(0xFFE8E2CA),
-          appBar: AppBar(
-            title: Container(
-              padding: EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Color(0xFFA3424B)),
-              child: RichText(
-                text: TextSpan(
-                  text: 'WeaknessWork',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+      body: Warmup(warmupKey: _warmupStateKey),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  int result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WeaknessAssessmentPage()),
+                  );
+                  setState(() {
+                    _warmupState?.selectedMovementIndex = result;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFD2DCEA),
+                  side: BorderSide(color: Colors.black, width: 2.0),
+                  shape: RoundedRectangleBorder(),
+                ),
+                child: Icon(MaterialSymbols.conditions, color: Colors.black),
+              ),
+              FloatingActionButton.extended(
+                heroTag: "resutsButton",
+                icon: Icon(
+                  Icons.score,
+                  color: Colors.black,
+                ),
+                label: Text(
+                  'Results',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AudioRecognize()),
+                  );
+                },
+                backgroundColor: Color(0xFFCF8E88),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black, width: 2.0),
                 ),
               ),
-            ),
-            backgroundColor: Color(0xFF759E80),
-          ),
-          body:
-              Warmup(warmupKey: _warmupStateKey),
-          bottomNavigationBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      int result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WeaknessAssessmentPage()),
-                      );
-                      setState(() {
-                        _warmupState?.selectedMovementIndex = result;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFD2DCEA),
-                      side: BorderSide(color: Colors.black, width: 2.0),
-                      shape: RoundedRectangleBorder(),
-                    ),
-                    child: Icon(MaterialSymbols.conditions, color: Colors.black),
-                  ),
-                  FloatingActionButton.extended(
-                    heroTag: "resutsButton",
-                    icon: Icon(
-                      Icons.score,
-                      color: Colors.black,
-                    ),
-                    label: Text(
-                      'Results',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AudioRecognize()),
-                      );
-                    },
-                    backgroundColor: Color(0xFFCF8E88),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.black, width: 2.0),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _showAppInfoModalBottomSheet(context);
-                    },
-                    child: Icon(Icons.info_outline, color: Colors.black),
-                  ),
-                ],
+              TextButton(
+                onPressed: () {
+                  _showAppInfoModalBottomSheet(context);
+                },
+                child: Icon(Icons.info_outline, color: Colors.black),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -303,9 +360,9 @@ class _ClearButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-    icon: const Icon(Icons.clear),
-    onPressed: () => controller.clear(),
-  );
+        icon: const Icon(Icons.clear),
+        onPressed: () => controller.clear(),
+      );
 }
 
 class LogEntry {
@@ -351,14 +408,16 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 
   Future<void> saveLogs(List<LogEntry> logs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('audioLogs', json.encode(logs.map((log) => log.toJson()).toList()));
+    await prefs.setString(
+        'audioLogs', json.encode(logs.map((log) => log.toJson()).toList()));
   }
 
   Future<List<LogEntry>> loadLogs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonString = prefs.getString('audioLogs') ?? '[]';
     List<dynamic> jsonList = json.decode(jsonString);
-    List<LogEntry> logs = jsonList.map((item) => LogEntry.fromJson(item)).toList();
+    List<LogEntry> logs =
+        jsonList.map((item) => LogEntry.fromJson(item)).toList();
     return logs;
   }
 
@@ -379,7 +438,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 
   @override
   void dispose() {
-    saveLogs(logs);  // Save the logs before the state is disposed of
+    saveLogs(logs); // Save the logs before the state is disposed of
     super.dispose();
   }
 
@@ -444,12 +503,12 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     responseStream.listen((data) {
       if (data.results.first.isFinal) {
         final currentText =
-        data.results.map((e) => e.alternatives.first.transcript).join('\n');
+            data.results.map((e) => e.alternatives.first.transcript).join('\n');
 
         responseText += responseText.isEmpty ? currentText : '\n' + currentText;
         setState(() {
-          text = responseText;  // update here
-          _textEditingController.text = responseText;  // update here
+          text = responseText; // update here
+          _textEditingController.text = responseText; // update here
           recognizeFinished = true;
         });
       }
@@ -580,8 +639,16 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     return Scaffold(
       appBar: AppBar(
         title: recognizing
-            ? Text('Recording...', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
-            : Text('Results', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            ? Text('Recording...',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold))
+            : Text('Results',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: Stack(
@@ -604,7 +671,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                           controller: TextEditingController(),
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _ClearButton(controller: TextEditingController()),
+                            suffixIcon: _ClearButton(
+                                controller: TextEditingController()),
                             labelText: 'Search logs',
                             filled: true,
                           ),
@@ -635,14 +703,18 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                     value: 1,
                                     child: Text(
                                       "Edit",
-                                      style: Theme.of(context).textTheme.labelSmall,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall,
                                     ),
                                   ),
                                   PopupMenuItem(
                                     value: 2,
                                     child: Text(
                                       "Delete",
-                                      style: Theme.of(context).textTheme.labelSmall,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall,
                                     ),
                                   ),
                                 ],
@@ -671,28 +743,37 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                         padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
                         child: Text(
                           DateFormat('EEEE yyMMdd').format(DateTime.now()),
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                       _RecognizeContent(textController: _textEditingController),
                       FilledButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            logs.add(LogEntry(_textEditingController.text, DateTime.now()));
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
-                          side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0.0),
+                          onPressed: () {
+                            setState(() {
+                              logs.add(LogEntry(
+                                  _textEditingController.text, DateTime.now()));
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFFD2DCEA)),
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.black, width: 2.0)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0),
+                              ),
                             ),
                           ),
-                        ),
-                        icon: const Icon(Icons.note_add, color: Colors.black),
-                        label: Text("Save", style: TextStyle(color: Colors.black),)
-                      ),
+                          icon: const Icon(Icons.note_add, color: Colors.black),
+                          label: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.black),
+                          )),
                     ],
                   ),
                 ),
@@ -763,7 +844,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 class _RecognizeContent extends StatelessWidget {
   final TextEditingController textController;
 
-  const _RecognizeContent({Key? key, required this.textController}) : super(key: key);
+  const _RecognizeContent({Key? key, required this.textController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -886,7 +968,9 @@ class _WarmupState extends State<Warmup> {
             .replaceAll('[ID:DB_IMAGES_2]', '')
             .replaceAll('[ID:BB_IMAGES_2]', '');
 
-        spans.add(TextSpan(text: line.substring(1),));
+        spans.add(TextSpan(
+          text: line.substring(1),
+        ));
 
         if (displayDumbbellImages) {
           List<String> imageList = [
@@ -996,11 +1080,17 @@ class _WarmupState extends State<Warmup> {
       } else if (line.startsWith('(')) {
         spans.add(TextSpan(
             text: line,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic)));
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontStyle: FontStyle.italic)));
       } else {
         spans.add(TextSpan(
             text: line,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)));
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.bold)));
       }
       spans.add(TextSpan(text: '\n'));
     }
@@ -1077,8 +1167,7 @@ class _WarmupState extends State<Warmup> {
               child: RichText(
                 text: TextSpan(
                     children: parseText(warmups[warmupNumber]),
-                    style: Theme.of(context).textTheme.bodySmall
-                ),
+                    style: Theme.of(context).textTheme.bodySmall),
               ),
             ),
           ),
@@ -1124,7 +1213,10 @@ class WeaknessAssessmentPage extends StatelessWidget {
           title: Text('Assess Weaknesses',
               maxLines: 2,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           iconTheme: IconThemeData(color: Colors.black),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
@@ -1134,7 +1226,10 @@ class WeaknessAssessmentPage extends StatelessWidget {
                 indicatorColor: Colors.white,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.black,
-                labelStyle: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                labelStyle: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
                 tabs: [
                   Tab(
                     icon: Icon(Icons.foundation),
@@ -1151,7 +1246,6 @@ class WeaknessAssessmentPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-
             // Movements view
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -1164,7 +1258,10 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         'Accelerate progress with tailored warm-ups to improve your weakest movement',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -1226,7 +1323,9 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                       padding: const EdgeInsets.only(top: 1.0),
                                       child: Text(movementNames[index],
                                           textAlign: TextAlign.center,
-                                          style: Theme.of(context).textTheme.labelSmall),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall),
                                     ),
                                   ],
                                 ),
@@ -1253,7 +1352,10 @@ class WeaknessAssessmentPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Text(
                         'Upload a video to identify and assess movement faults to correct mechanics',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Column(
@@ -1328,7 +1430,9 @@ class WeaknessAssessmentPage extends StatelessWidget {
                                       padding: const EdgeInsets.only(top: 1.0),
                                       child: Text(movementNames[index],
                                           textAlign: TextAlign.center,
-                                          style: Theme.of(context).textTheme.labelSmall),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall),
                                     ),
                                   ],
                                 ),

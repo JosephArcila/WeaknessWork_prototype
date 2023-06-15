@@ -5,7 +5,6 @@ import 'package:chewie/chewie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
-import 'package:google_speech/speech_client_authenticator.dart';
 import 'package:google_speech/google_speech.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -88,22 +87,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   stt.SpeechToText? _speech;
-  bool _isListening = false;
-  bool _isNavigating = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<_WarmupState> _warmupStateKey = GlobalKey<_WarmupState>();
-  final GlobalKey<_AudioRecognizeState> _audioRecognizeKey =
-      GlobalKey<_AudioRecognizeState>();
   _WarmupState? get _warmupState => _warmupStateKey.currentState;
 
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listen();
-    });
   }
 
   @override
@@ -162,31 +153,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ], style: Theme.of(context).textTheme.bodyMedium),
                   ),
-                  SizedBox(height: 8.0),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Voice Command Guide \n',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: 'All right record: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: 'Starts recording the workout result.\n',
-                        ),
-                      ],
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -194,57 +160,6 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-  }
-
-  void _listen() async {
-    if (!_isListening) {
-      bool available = await _speech!.initialize(
-        onStatus: (val) {
-          if (val == 'notListening') {
-            setState(() => _isListening = false);
-          } else {
-            setState(() => _isListening = true);
-          }
-        },
-        onError: (val) => print('Error: $val'),
-      );
-      if (available) {
-        _speech!.listen(
-          onResult: (val) async {
-            print('Recognized words: ${val.recognizedWords}');
-            final recognizedWords = val.recognizedWords.toLowerCase().trim();
-            if (recognizedWords == 'all right record' && !_isNavigating) {
-              _isNavigating = true; // Set flag to prevent navigation loop
-              _speech?.stop();
-              await Future.delayed(Duration(milliseconds: 500));
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        AudioRecognize(startImmediately: true)),
-              );
-              _audioRecognizeKey.currentState!.startRecording();
-              bool available = await _speech!.initialize(
-                onStatus: (val) {
-                  if (val == 'notListening') {
-                    setState(() => _isListening = false);
-                  } else {
-                    setState(() => _isListening = true);
-                  }
-                },
-                onError: (val) => print('Error: $val'),
-              );
-              if (available) {
-                _speech?.listen(); // Start listening again
-                setState(() =>
-                    _isListening = true); // Ensure _isListening is set to true
-              }
-              _isNavigating = false;
-            }
-          },
-        );
-      }
-    }
   }
 
   @override

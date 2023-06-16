@@ -13,26 +13,24 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   runApp(WeaknessWorkApp());
 }
 
 class WeaknessWorkApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -310,6 +308,8 @@ class LogEntry {
 }
 
 class _AudioRecognizeState extends State<AudioRecognize> {
+  // Create the FirebaseAnalytics instance
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool recognizing = false;
@@ -320,19 +320,42 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   StreamController<Food>? _recordingDataController;
   StreamSubscription? _recordingDataSubscription;
   TextEditingController _textEditingController = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
 
   Future<void> saveLogs(List<LogEntry> logs) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        'audioLogs', json.encode(logs.map((log) => log.toJson()).toList()));
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Check if the user is null
+    if (user == null) {
+      throw Exception('No user currently signed in.');
+    }
+
+    String uid = user.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    // Convert each log entry to a Map before saving
+    List<Map<String, dynamic>> logsData = logs.map((log) => log.toMap()).toList();
+
+    return users.doc(uid).set({ 'logs': logsData });
   }
 
   Future<List<LogEntry>> loadLogs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String jsonString = prefs.getString('audioLogs') ?? '[]';
-    List<dynamic> jsonList = json.decode(jsonString);
-    List<LogEntry> logs =
-        jsonList.map((item) => LogEntry.fromJson(item)).toList();
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Check if the user is null
+    if (user == null) {
+      throw Exception('No user currently signed in.');
+    }
+
+    String uid = user.uid;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    DocumentSnapshot documentSnapshot = await users.doc(uid).get();
+
+    // Fetch logs data and convert to List<LogEntry>
+    List<dynamic> logsData = documentSnapshot['logs'] ?? [];
+    List<LogEntry> logs = logsData.map((item) => LogEntry.fromMap(item)).toList();
+
     return logs;
   }
 
@@ -357,11 +380,20 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     super.dispose();
   }
 
-  void addLog(LogEntry log) {
+  void addLog(LogEntry log, String userId) {
     setState(() {
       logs.add(log);
     });
     saveLogs(logs);
+    // Log the custom event with Firebase Analytics
+    _analytics.logEvent(
+      name: 'log_added',
+      parameters: <String, dynamic>{
+        'log_text': log.text,
+        'log_date': log.date.toIso8601String(),
+        'user_id': userId,
+      },
+    );
   }
 
   void removeLog(LogEntry log) {
@@ -580,19 +612,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: TextField(
-                          controller: TextEditingController(),
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _ClearButton(
-                                controller: TextEditingController()),
-                            labelText: 'Search logs',
-                            filled: true,
-                          ),
-                        ),
-                      ),
                       for (var log in logs)
                         Column(
                           children: [
@@ -636,11 +655,85 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                 onSelected: (value) {
                                   if (value == 1) {
                                     // Edit the ListTile...
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        // Use a TextEditingController to capture the new text
+                                        final TextEditingController _editingController = TextEditingController(text: log.text);
+                                        DateTime _editedDate = log.date;
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setState) {
+                                            return AlertDialog(
+                                              title: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                        '${DateFormat('EEEE yyMMdd').format(_editedDate)}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium
+                                                            ?.copyWith(fontWeight: FontWeight.bold)),
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.edit_calendar),
+                                                    onPressed: () async {
+                                                      final DateTime? picked = await showDatePicker(
+                                                        context: context,
+                                                        initialDate: _editedDate,
+                                                        firstDate: DateTime(2015, 8),
+                                                        lastDate: DateTime(2101),
+                                                      );
+                                                      if (picked != null && picked != _editedDate)
+                                                        setState(() {
+                                                          _editedDate = picked;
+                                                        });
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  TextField(
+                                                    controller: _editingController,
+                                                    maxLines: 3,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text('Cancel'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text('Save'),
+                                                  onPressed: () {
+                                                    // Update the log entry with the new text and date
+                                                    int logIndex = logs.indexOf(log);
+                                                    setState(() {
+                                                      logs[logIndex] = LogEntry(_editingController.text, _editedDate);
+                                                    });
+                                                    saveLogs(logs); // Save the updated logs
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
                                   } else if (value == 2) {
                                     // Delete the ListTile...
                                     setState(() {
                                       logs.remove(log);
                                     });
+                                    saveLogs(logs); // Save the updated logs
                                   }
                                 },
                               ),
@@ -655,21 +748,52 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                           ],
                         ),
                       Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: TextField(
+                          controller: TextEditingController(),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _ClearButton(
+                                controller: TextEditingController()),
+                            labelText: 'Search logs',
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
-                        child: Text(
-                          DateFormat('EEEE yyMMdd').format(DateTime.now()),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              DateFormat('EEEE yyMMdd').format(_selectedDate),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit_calendar),
+                              onPressed: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: _selectedDate,
+                                  firstDate: DateTime(2015, 8),
+                                  lastDate: DateTime(2101),
+                                );
+                                if (picked != null && picked != _selectedDate)
+                                  setState(() {
+                                    _selectedDate = picked;
+                                  });
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       _RecognizeContent(textController: _textEditingController),
                       FilledButton.icon(
                           onPressed: () {
                             setState(() {
-                              logs.add(LogEntry(
-                                  _textEditingController.text, DateTime.now()));
+                              logs.add(LogEntry(_textEditingController.text, _selectedDate));
                             });
                           },
                           style: ButtonStyle(
@@ -724,7 +848,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     OutlinedButton(
-                      child: Icon(Icons.search, color: Colors.black),
+                      child: Icon(Icons.history, color: Colors.black),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.black, width: 2.0),
                         shape: RoundedRectangleBorder(),

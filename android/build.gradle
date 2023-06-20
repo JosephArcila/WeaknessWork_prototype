@@ -1,8 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.6.0' // Update this line with the latest version of Kotlin
+    ext.kotlin_version = '1.7.10' // Update this line with the latest version of Kotlin
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -15,7 +15,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 

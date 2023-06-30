@@ -102,65 +102,6 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _showAppInfoModalBottomSheet(BuildContext context) {
-    ScrollController _modalScrollController = ScrollController();
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Color(0xFFE8E2CA),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.0),
-                topRight: Radius.circular(16.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _modalScrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                        text: 'General Warm-Ups to Address Weaknesses \n',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      TextSpan(
-                        text:
-                            '\u2022 Based on the CrossFit Training Level 2 Guide\n',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      TextSpan(
-                        text: '\u2022 Use them to add skill work by modality\n',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      TextSpan(
-                        text:
-                            '\u2022 Performed for 2-3 rounds, each more complicated\n',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      TextSpan(
-                        text: '\u2022 5-15 reps per movement',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ], style: Theme.of(context).textTheme.bodyMedium),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,12 +183,6 @@ class _HomePageState extends State<HomePage> {
                 shape: RoundedRectangleBorder(
                   side: BorderSide(color: Colors.black, width: 2.0),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  _showAppInfoModalBottomSheet(context);
-                },
-                child: Icon(Icons.info_outline, color: Colors.black),
               ),
             ],
           ),

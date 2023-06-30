@@ -539,7 +539,7 @@ class _WODResult extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
             controller: textController,
             maxLines: null,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.newline, // Changed this line
             onChanged: (value) {
               // The textController is updated automatically
             },

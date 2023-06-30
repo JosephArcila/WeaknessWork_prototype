@@ -5,11 +5,7 @@ import 'package:chewie/chewie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
-import 'package:google_speech/google_speech.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
-import 'package:flutter_sound_lite/flutter_sound.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -247,14 +243,7 @@ class _ResultsState extends State<Results> {
   // Create the FirebaseAnalytics instance
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  bool recognizing = false;
-  bool recognizeFinished = false;
   String text = '';
-  StreamSubscription<List<int>>? _audioStreamSubscription;
-  BehaviorSubject<List<int>>? _audioStream;
-  StreamController<Food>? _recordingDataController;
-  StreamSubscription? _recordingDataSubscription;
   TextEditingController _textEditingController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
@@ -309,19 +298,12 @@ class _ResultsState extends State<Results> {
   @override
   void initState() {
     super.initState();
-
-    // // Enable Firebase Analytics collection
-    // FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-
     loadLogs().then((savedLogs) {
       setState(() {
         logs = savedLogs;
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.startImmediately) {
-        startRecording();
-      }
     });
   }
 
@@ -331,193 +313,11 @@ class _ResultsState extends State<Results> {
     super.dispose();
   }
 
-  void startRecording() {
-    if (!recognizing) {
-      streamingRecognize();
-    }
-  }
-
-  void streamingRecognize() async {
-    await _recorder.openAudioSession();
-    // Stream to be consumed by speech recognizer
-    _audioStream = BehaviorSubject<List<int>>();
-
-    // Create recording stream
-    _recordingDataController = StreamController<Food>();
-    _recordingDataSubscription =
-        _recordingDataController?.stream.listen((buffer) {
-      if (buffer is FoodData) {
-        _audioStream!.add(buffer.data!);
-      }
-    });
-
-    setState(() {
-      recognizing = true;
-    });
-
-    await _recorder.startRecorder(
-        toStream: _recordingDataController!.sink,
-        codec: Codec.pcm16,
-        numChannels: kAudioNumChannels,
-        sampleRate: kAudioSampleRate);
-
-    final serviceAccount = ServiceAccount.fromString(
-        (await rootBundle.loadString('assets/test_service_account.json')));
-    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
-
-    final config = _getConfig();
-
-    final responseStream = speechToText.streamingRecognize(
-        StreamingRecognitionConfig(config: config, interimResults: true),
-        _audioStream!);
-
-    var responseText = '';
-
-    responseStream.listen((data) {
-      if (data.results.first.isFinal) {
-        final currentText =
-            data.results.map((e) => e.alternatives.first.transcript).join('\n');
-
-        responseText += responseText.isEmpty ? currentText : '\n' + currentText;
-        setState(() {
-          text = responseText; // update here
-          _textEditingController.text = responseText; // update here
-          recognizeFinished = true;
-        });
-      }
-    }, onDone: () {
-      setState(() {
-        recognizing = false;
-      });
-    });
-  }
-
-  void stopRecording() async {
-    await _recorder.stopRecorder();
-    await _audioStreamSubscription?.cancel();
-    await _audioStream?.close();
-    await _recordingDataSubscription?.cancel();
-    setState(() {
-      recognizing = false;
-    });
-  }
-
-  RecognitionConfig _getConfig() => RecognitionConfig(
-          encoding: AudioEncoding.LINEAR16,
-          model: RecognitionModel.command_and_search,
-          enableAutomaticPunctuation: true,
-          sampleRateHertz: 16000,
-          languageCode: 'en-US',
-          speechContexts: [
-            SpeechContext([
-              "AMRAP",
-              "EMOM",
-              "WOD",
-              "Metcon",
-              "PR",
-              "RX",
-              "deadlift",
-              "plank hold",
-              "calorie row",
-              "box jump",
-              "wall-ball",
-              "burpee",
-              "Clean and jerk",
-              "Snatch",
-              "double-under",
-              "kipping",
-              "Thruster",
-              "Muscle-up",
-              "handstand push-ups",
-              "toes-to-bar",
-              "kettlebell swing",
-              "Fran",
-              "Cindy",
-              "Murph",
-              "Lynne",
-              "bench press",
-              "pull-up",
-              "round",
-              "rep",
-              "max reps",
-              "body weight",
-              "Angie",
-              "Barbara",
-              "Chelsea",
-              "Diane",
-              "Elizabeth",
-              "Grace",
-              "Helen",
-              "Isabel",
-              "Jackie",
-              "Karen",
-              "Linda",
-              "Mary",
-              "Nancy",
-              "Annie",
-              "Eva",
-              "Kelly",
-              "Nicole",
-              "Amanda",
-              "Gwen",
-              "Marguerita",
-              "Candy",
-              "Maggie",
-              "Hope",
-              "Grettel",
-              "Ingrid",
-              "Barbara Ann",
-              "Lyla",
-              "Ellen",
-              "Andi",
-              "Lane",
-              "clean and jerks",
-              "snatches",
-              "thrusters",
-              "sumo deadlift high pulls",
-              "front squats",
-              "hang power snatches",
-              "push presses",
-              "handstand push-ups",
-              "one-legged squats",
-              "burpees over the bar",
-              "bodyweight clean and jerks",
-              "dumbbell snatches",
-              "dumbbell thrusters",
-              "for time",
-              "rounds for time",
-              "reps for time",
-              "complete as many rounds as possible",
-              "every minute on the minute",
-              "max reps",
-              "rest precisely",
-              "body-weight",
-              "same load",
-              "rotate",
-              "score",
-              "single dumbbell",
-              "pair",
-              "single-arm",
-              "double-arm",
-              "alternating legs",
-              "touch and go",
-              "no dumping",
-              "re-grip",
-              "foul"
-            ])
-          ]);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: recognizing
-            ? Text('Recording...',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold))
-            : Text('Results',
+        title: Text('Results',
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium
@@ -528,12 +328,6 @@ class _ResultsState extends State<Results> {
           children: <Widget>[
             ListView(
               children: <Widget>[
-                if (recognizing)
-                  LinearProgressIndicator(
-                    backgroundColor: Color(0xFFD2DCEA),
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFFB84F52)),
-                  ),
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -769,26 +563,7 @@ class _ResultsState extends State<Results> {
       ),
       bottomNavigationBar: BottomAppBar(
         color: Color(0xFFE8E2CA),
-        child: recognizing
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FilledButton(
-                  child: Icon(Icons.stop, color: Colors.black),
-                  onPressed: stopRecording,
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                        side: BorderSide(width: 2.0),
-                      ),
-                    ),
-                    elevation: MaterialStateProperty.all<double>(12.0),
-                  ),
-                ),
-              )
-            : Padding(
+        child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

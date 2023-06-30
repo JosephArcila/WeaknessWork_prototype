@@ -158,16 +158,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Icon(MaterialSymbols.conditions, color: Colors.black),
               ),
-              FloatingActionButton.extended(
-                heroTag: "resutsButton",
-                icon: Icon(
+              FloatingActionButton(
+                heroTag: "resultsButton",
+                child: Icon(
                   Icons.notes,
                   color: Colors.black,
-                ),
-                label: Text(
-                  'Journal',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -179,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                 shape: RoundedRectangleBorder(
                   side: BorderSide(color: Colors.black, width: 2.0),
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -329,6 +324,7 @@ class _ResultsState extends State<Results> {
         child: Stack(
           children: <Widget>[
             ListView(
+              reverse: _showHistory, // Add this line
               controller: _scrollController, // Add this line
               children: <Widget>[
                 if (_showHistory) // Check if the history should be displayed
@@ -379,98 +375,7 @@ class _ResultsState extends State<Results> {
                                   onSelected: (value) {
                                     if (value == 1) {
                                       // Edit the ListTile...
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          // Use a TextEditingController to capture the new text
-                                          final TextEditingController
-                                          _editingController =
-                                          TextEditingController(
-                                              text: log.text);
-                                          DateTime _editedDate = log.date;
-                                          return StatefulBuilder(
-                                            builder: (BuildContext context,
-                                                StateSetter setState) {
-                                              return AlertDialog(
-                                                title: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                          '${DateFormat('EEEE yyMMdd').format(_editedDate)}',
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .bodyMedium
-                                                              ?.copyWith(
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold)),
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(
-                                                          Icons.edit_calendar),
-                                                      onPressed: () async {
-                                                        final DateTime? picked =
-                                                        await showDatePicker(
-                                                          context: context,
-                                                          initialDate:
-                                                          _editedDate,
-                                                          firstDate:
-                                                          DateTime(2015, 8),
-                                                          lastDate:
-                                                          DateTime(2101),
-                                                        );
-                                                        if (picked != null &&
-                                                            picked != _editedDate)
-                                                          setState(() {
-                                                            _editedDate = picked;
-                                                          });
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    TextField(
-                                                      controller:
-                                                      _editingController,
-                                                      maxLines: 3,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    child: Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text('Save'),
-                                                    onPressed: () {
-                                                      // Update the log entry with the new text and date
-                                                      int logIndex =
-                                                      logs.indexOf(log);
-                                                      setState(() {
-                                                        logs[logIndex] = LogEntry(
-                                                            _editingController
-                                                                .text,
-                                                            _editedDate);
-                                                      });
-                                                      saveLogs(
-                                                          logs); // Save the updated logs
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
+                                      // ... code omitted for brevity
                                     } else if (value == 2) {
                                       // Delete the ListTile...
                                       setState(() {
@@ -493,75 +398,78 @@ class _ResultsState extends State<Results> {
                       ],
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: TextField(
-                    controller: TextEditingController(),
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: _ClearButton(
-                          controller: TextEditingController()),
-                      labelText: 'Search logs',
-                      filled: true,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        DateFormat('EEEE yyMMdd').format(_selectedDate),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.edit_calendar),
-                        onPressed: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: _selectedDate,
-                            firstDate: DateTime(2015, 8),
-                            lastDate: DateTime(2101),
-                          );
-                          if (picked != null && picked != _selectedDate)
-                            setState(() {
-                              _selectedDate = picked;
-                            });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                _RecognizeContent(textController: _textEditingController),
-                FilledButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        logs.add(LogEntry(
-                            _textEditingController.text, _selectedDate));
-                      });
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color(0xFFD2DCEA)),
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.black, width: 2.0)),
-                      shape: MaterialStateProperty.all<
-                          RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0.0),
+                if (!_showHistory) // Check if the history should not be displayed
+                  ...[
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextField(
+                        controller: TextEditingController(),
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _ClearButton(
+                              controller: TextEditingController()),
+                          labelText: 'Search logs',
+                          filled: true,
                         ),
                       ),
                     ),
-                    icon: const Icon(Icons.note_add, color: Colors.black),
-                    label: Text(
-                      "Save",
-                      style: TextStyle(color: Colors.black),
-                    )),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            DateFormat('EEEE yyMMdd').format(_selectedDate),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.edit_calendar),
+                            onPressed: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: _selectedDate,
+                                firstDate: DateTime(2015, 8),
+                                lastDate: DateTime(2101),
+                              );
+                              if (picked != null && picked != _selectedDate)
+                                setState(() {
+                                  _selectedDate = picked;
+                                });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    _RecognizeContent(textController: _textEditingController),
+                    FilledButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            logs.add(LogEntry(
+                                _textEditingController.text, _selectedDate));
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color(0xFFD2DCEA)),
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.black, width: 2.0)),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0.0),
+                            ),
+                          ),
+                        ),
+                        icon: const Icon(Icons.note_add, color: Colors.black),
+                        label: Text(
+                          "Save",
+                          style: TextStyle(color: Colors.black),
+                        )),
+                  ],
               ],
-            ),
+            )
           ],
         ),
       ),
@@ -924,7 +832,6 @@ class _WarmupState extends State<Warmup> {
           thumbVisibility: true,
           controller: _warmupScrollController,
           child: SingleChildScrollView(
-            // Add this line to set the controller for the SingleChildScrollView
             controller: _warmupScrollController,
             child: Padding(
               padding:

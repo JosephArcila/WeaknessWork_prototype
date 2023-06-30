@@ -193,18 +193,6 @@ class Journal extends StatefulWidget {
   State<StatefulWidget> createState() => _JournalState();
 }
 
-class _ClearButton extends StatelessWidget {
-  const _ClearButton({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) => IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () => controller.clear(),
-      );
-}
-
 class LogEntry {
   final String text;
   final DateTime date;
@@ -234,6 +222,112 @@ class LogEntry {
   static LogEntry fromJson(String source) => fromMap(json.decode(source));
 }
 
+class LogsSearchDelegate extends SearchDelegate {
+  final List<LogEntry> logs;
+
+  LogsSearchDelegate({required this.logs});
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          showSuggestions(context);
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final List<LogEntry> suggestions = query.isEmpty
+        ? []
+        : logs.where((log) => log.text.contains(query)).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final log = suggestions[index];
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                DateFormat('EEEE yyMMdd').format(log.date),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                log.text,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Divider(
+              height: 25.0,
+              thickness: 2.0,
+              color: Color(0xFF759E80),
+              indent: 20,
+              endIndent: 20,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final List<LogEntry> results = logs.where((log) => log.text.contains(query)).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final log = results[index];
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                DateFormat('EEEE yyMMdd').format(log.date),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                log.text,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+            Divider(
+              height: 25.0,
+              thickness: 2.0,
+              color: Color(0xFF759E80),
+              indent: 20,
+              endIndent: 20,
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _JournalState extends State<Journal> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];
@@ -241,6 +335,8 @@ class _JournalState extends State<Journal> {
   TextEditingController _textEditingController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   bool _showHistory = false;
+  List<LogEntry> filteredLogs = [];
+  TextEditingController _searchController = TextEditingController();
 
   final ScrollController _scrollController = ScrollController();
 
@@ -298,18 +394,37 @@ class _JournalState extends State<Journal> {
   @override
   void initState() {
     super.initState();
+
+    _searchController.addListener(() {
+      search(_searchController.text);
+    });
+
     loadLogs().then((savedLogs) {
       setState(() {
         logs = savedLogs;
+        filteredLogs = savedLogs; // Initialize filteredLogs
       });
     });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
     });
   }
 
+  void search(String term) {
+    if(term.isEmpty) {
+      setState(() {
+        filteredLogs = logs;
+      });
+    } else {
+      setState(() {
+        filteredLogs = logs.where((log) => log.text.contains(term)).toList();
+      });
+    }
+  }
+
   @override
   void dispose() {
-    saveLogs(logs); // Save the logs before the state is disposed of
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -342,7 +457,7 @@ class _JournalState extends State<Journal> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          for (var log in logs)
+                          for (var log in filteredLogs)
                             Column(
                               children: [
                                 ListTile(
@@ -502,14 +617,28 @@ class _JournalState extends State<Journal> {
                     ...[
                       Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: TextField(
-                          controller: TextEditingController(),
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _ClearButton(
-                                controller: TextEditingController()),
-                            labelText: 'Search logs',
-                            filled: true,
+                        child: Container(
+                          color: Colors.white, // replace with the color of your TextField
+                          child: GestureDetector(
+                            onTap: () {
+                              showSearch(
+                                context: context,
+                                delegate: LogsSearchDelegate(logs: logs),
+                              );
+                            },
+                            child: Container(
+                              color: Colors.white, // replace with the color of your TextField
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(Icons.search),
+                                    SizedBox(width: 10),
+                                    Expanded(child: Text('Search logs')),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),

@@ -442,7 +442,7 @@ class _JournalState extends State<Journal> {
                         ],
                       ),
                     ),
-                    _RecognizeContent(textController: _textEditingController),
+                    _WODResult(textController: _textEditingController),
                     FilledButton.icon(
                         onPressed: () {
                           setState(() {
@@ -514,10 +514,10 @@ class _JournalState extends State<Journal> {
   }
 }
 
-class _RecognizeContent extends StatelessWidget {
+class _WODResult extends StatelessWidget {
   final TextEditingController textController;
 
-  const _RecognizeContent({Key? key, required this.textController})
+  const _WODResult({Key? key, required this.textController})
       : super(key: key);
 
   @override

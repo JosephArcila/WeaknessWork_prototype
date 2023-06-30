@@ -312,201 +312,300 @@ class _JournalState extends State<Journal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('WOD Journal',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold)),
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            ListView(
-              reverse: _showHistory, // Add this line
-              controller: _scrollController, // Add this line
-              children: <Widget>[
-                if (_showHistory) // Check if the history should be displayed
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        for (var log in logs)
-                          Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  DateFormat('EEEE yyMMdd').format(log.date),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Container(
-                                  color: Color(0xFFF4F1E6),
-                                  child: Text(
-                                    log.text,
-                                    style: Theme.of(context).textTheme.bodySmall,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('WOD Journal',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+        ),
+        body: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              ListView(
+                reverse: _showHistory, // Add this line
+                controller: _scrollController, // Add this line
+                children: <Widget>[
+                  if (_showHistory) // Check if the history should be displayed
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          for (var log in logs)
+                            Column(
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    DateFormat('EEEE yyMMdd').format(log.date),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Container(
+                                    color: Color(0xFFF4F1E6),
+                                    child: Text(
+                                      log.text,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                  trailing: PopupMenuButton<int>(
+                                    icon: Icon(Icons.more_horiz),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: 1,
+                                        child: Text(
+                                          "Edit",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 2,
+                                        child: Text(
+                                          "Delete",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ),
+                                    ],
+                                    onSelected: (value) {
+                                      if (value == 1) {
+                                        // Edit the ListTile...
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            // Use a TextEditingController to capture the new text
+                                            final TextEditingController
+                                            _editingController =
+                                            TextEditingController(
+                                                text: log.text);
+                                            DateTime _editedDate = log.date;
+                                            return StatefulBuilder(
+                                              builder: (BuildContext context,
+                                                  StateSetter setState) {
+                                                return AlertDialog(
+                                                  title: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                            '${DateFormat('EEEE yyMMdd').format(_editedDate)}',
+                                                            style: Theme.of(context)
+                                                                .textTheme
+                                                                .bodyMedium
+                                                                ?.copyWith(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                      ),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                            Icons.edit_calendar),
+                                                        onPressed: () async {
+                                                          final DateTime? picked =
+                                                          await showDatePicker(
+                                                            context: context,
+                                                            initialDate:
+                                                            _editedDate,
+                                                            firstDate:
+                                                            DateTime(2015, 8),
+                                                            lastDate:
+                                                            DateTime(2101),
+                                                          );
+                                                          if (picked != null &&
+                                                              picked != _editedDate)
+                                                            setState(() {
+                                                              _editedDate = picked;
+                                                            });
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  content: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      TextField(
+                                                        controller:
+                                                        _editingController,
+                                                        maxLines: 3,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodySmall,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: Text('Cancel'),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: Text('Save'),
+                                                      onPressed: () {
+                                                        // Update the log entry with the new text and date
+                                                        int logIndex =
+                                                        logs.indexOf(log);
+                                                        setState(() {
+                                                          logs[logIndex] = LogEntry(
+                                                              _editingController
+                                                                  .text,
+                                                              _editedDate);
+                                                        });
+                                                        saveLogs(
+                                                            logs); // Save the updated logs
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        );
+                                      } else if (value == 2) {
+                                        // Delete the ListTile...
+                                        setState(() {
+                                          logs.remove(log);
+                                        });
+                                        saveLogs(logs); // Save the updated logs
+                                      }
+                                    },
                                   ),
                                 ),
-                                trailing: PopupMenuButton<int>(
-                                  icon: Icon(Icons.more_horiz),
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: 1,
-                                      child: Text(
-                                        "Edit",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
-                                      ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      child: Text(
-                                        "Delete",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
-                                      ),
-                                    ),
-                                  ],
-                                  onSelected: (value) {
-                                    if (value == 1) {
-                                      // Edit the ListTile...
-                                      // ... code omitted for brevity
-                                    } else if (value == 2) {
-                                      // Delete the ListTile...
-                                      setState(() {
-                                        logs.remove(log);
-                                      });
-                                      saveLogs(logs); // Save the updated logs
-                                    }
-                                  },
+                                Divider(
+                                  height: 25.0,
+                                  thickness: 2.0,
+                                  color: Color(0xFF759E80),
+                                  indent: 20,
+                                  endIndent: 20,
                                 ),
-                              ),
-                              Divider(
-                                height: 25.0,
-                                thickness: 2.0,
-                                color: Color(0xFF759E80),
-                                indent: 20,
-                                endIndent: 20,
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                if (!_showHistory) // Check if the history should not be displayed
-                  ...[
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: TextField(
-                        controller: TextEditingController(),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.search),
-                          suffixIcon: _ClearButton(
-                              controller: TextEditingController()),
-                          labelText: 'Search logs',
-                          filled: true,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            DateFormat('EEEE yyMMdd').format(_selectedDate),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.edit_calendar),
-                            onPressed: () async {
-                              final DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: _selectedDate,
-                                firstDate: DateTime(2015, 8),
-                                lastDate: DateTime(2101),
-                              );
-                              if (picked != null && picked != _selectedDate)
-                                setState(() {
-                                  _selectedDate = picked;
-                                });
-                            },
-                          ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
-                    _WODResult(textController: _textEditingController),
-                    FilledButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            logs.add(LogEntry(
-                                _textEditingController.text, _selectedDate));
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Color(0xFFD2DCEA)),
-                          side: MaterialStateProperty.all<BorderSide>(
-                              BorderSide(color: Colors.black, width: 2.0)),
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0.0),
-                            ),
+                  if (!_showHistory) // Check if the history should not be displayed
+                    ...[
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: TextField(
+                          controller: TextEditingController(),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _ClearButton(
+                                controller: TextEditingController()),
+                            labelText: 'Search logs',
+                            filled: true,
                           ),
                         ),
-                        icon: const Icon(Icons.note_add, color: Colors.black),
-                        label: Text(
-                          "Save",
-                          style: TextStyle(color: Colors.black),
-                        )),
-                  ],
-              ],
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Color(0xFFE8E2CA),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              OutlinedButton.icon(
-                icon: Icon(
-                    _showHistory ? Icons.today : Icons.history,
-                    color: Colors.black
-                ),
-                label: Text(
-                  _showHistory ? 'Today' : 'History',
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.black, width: 2.0),
-                  shape: RoundedRectangleBorder(),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _showHistory = !_showHistory; // Toggle the state
-                  });
-                  if (_showHistory) {
-                    _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: Duration(seconds: 1),
-                      curve: Curves.fastOutSlowIn,
-                    );
-                  }
-                },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              DateFormat('EEEE yyMMdd').format(_selectedDate),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit_calendar),
+                              onPressed: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: _selectedDate,
+                                  firstDate: DateTime(2015, 8),
+                                  lastDate: DateTime(2101),
+                                );
+                                if (picked != null && picked != _selectedDate)
+                                  setState(() {
+                                    _selectedDate = picked;
+                                  });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      _WODResult(textController: _textEditingController),
+                      FilledButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              logs.add(LogEntry(
+                                  _textEditingController.text, _selectedDate));
+                            });
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFFD2DCEA)),
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.black, width: 2.0)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0.0),
+                              ),
+                            ),
+                          ),
+                          icon: const Icon(Icons.note_add, color: Colors.black),
+                          label: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                    ],
+                ],
               )
             ],
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: Color(0xFFE8E2CA),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OutlinedButton.icon(
+                  icon: Icon(
+                      _showHistory ? Icons.today : Icons.history,
+                      color: Colors.black
+                  ),
+                  label: Text(
+                    _showHistory ? 'Today' : 'History',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.black, width: 2.0),
+                    shape: RoundedRectangleBorder(),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _showHistory = !_showHistory; // Toggle the state
+                    });
+                    if (_showHistory) {
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: Duration(seconds: 1),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

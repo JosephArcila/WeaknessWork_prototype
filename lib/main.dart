@@ -9,7 +9,6 @@ import 'package:google_speech/google_speech.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart';
@@ -33,7 +32,6 @@ Future<void> main() async {
 }
 
 class WeaknessWorkApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -312,7 +310,7 @@ class LogEntry {
 
 class _AudioRecognizeState extends State<AudioRecognize> {
   // Create the FirebaseAnalytics instance
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool recognizing = false;
@@ -339,7 +337,17 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     // Convert each log entry to a Map before saving
     List<Map<String, dynamic>> logsData = logs.map((log) => log.toMap()).toList();
 
-    return users.doc(uid).set({ 'logs': logsData });
+    String logTexts = logsData.map((log) => log['text_field']).join(', ');
+
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'log_added',
+      parameters: <String, dynamic>{
+        'user': uid,
+        'log_text': logTexts,
+      },
+    );
+
+    return users.doc(uid).set({'logs': logsData});
   }
 
   Future<List<LogEntry>> loadLogs() async {
@@ -357,7 +365,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 
     // Fetch logs data and convert to List<LogEntry>
     List<dynamic> logsData = documentSnapshot['logs'] ?? [];
-    List<LogEntry> logs = logsData.map((item) => LogEntry.fromMap(item)).toList();
+    List<LogEntry> logs =
+        logsData.map((item) => LogEntry.fromMap(item)).toList();
 
     return logs;
   }
@@ -365,6 +374,10 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   @override
   void initState() {
     super.initState();
+
+    // // Enable Firebase Analytics collection
+    // FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+
     loadLogs().then((savedLogs) {
       setState(() {
         logs = savedLogs;
@@ -381,29 +394,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   void dispose() {
     saveLogs(logs); // Save the logs before the state is disposed of
     super.dispose();
-  }
-
-  void addLog(LogEntry log, String userId) {
-    setState(() {
-      logs.add(log);
-    });
-    saveLogs(logs);
-    // Log the custom event with Firebase Analytics
-    _analytics.logEvent(
-      name: 'log_added',
-      parameters: <String, dynamic>{
-        'log_text': log.text,
-        'log_date': log.date.toIso8601String(),
-        'user_id': userId,
-      },
-    );
-  }
-
-  void removeLog(LogEntry log) {
-    setState(() {
-      logs.remove(log);
-    });
-    saveLogs(logs);
   }
 
   void startRecording() {
@@ -429,8 +419,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     setState(() {
       recognizing = true;
     });
-
-    await Permission.microphone.request();
 
     await _recorder.startRecorder(
         toStream: _recordingDataController!.sink,
@@ -662,10 +650,14 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                       context: context,
                                       builder: (context) {
                                         // Use a TextEditingController to capture the new text
-                                        final TextEditingController _editingController = TextEditingController(text: log.text);
+                                        final TextEditingController
+                                            _editingController =
+                                            TextEditingController(
+                                                text: log.text);
                                         DateTime _editedDate = log.date;
                                         return StatefulBuilder(
-                                          builder: (BuildContext context, StateSetter setState) {
+                                          builder: (BuildContext context,
+                                              StateSetter setState) {
                                             return AlertDialog(
                                               title: Row(
                                                 children: [
@@ -675,18 +667,27 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .bodyMedium
-                                                            ?.copyWith(fontWeight: FontWeight.bold)),
+                                                            ?.copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
                                                   ),
                                                   IconButton(
-                                                    icon: Icon(Icons.edit_calendar),
+                                                    icon: Icon(
+                                                        Icons.edit_calendar),
                                                     onPressed: () async {
-                                                      final DateTime? picked = await showDatePicker(
+                                                      final DateTime? picked =
+                                                          await showDatePicker(
                                                         context: context,
-                                                        initialDate: _editedDate,
-                                                        firstDate: DateTime(2015, 8),
-                                                        lastDate: DateTime(2101),
+                                                        initialDate:
+                                                            _editedDate,
+                                                        firstDate:
+                                                            DateTime(2015, 8),
+                                                        lastDate:
+                                                            DateTime(2101),
                                                       );
-                                                      if (picked != null && picked != _editedDate)
+                                                      if (picked != null &&
+                                                          picked != _editedDate)
                                                         setState(() {
                                                           _editedDate = picked;
                                                         });
@@ -698,7 +699,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
                                                   TextField(
-                                                    controller: _editingController,
+                                                    controller:
+                                                        _editingController,
                                                     maxLines: 3,
                                                     style: Theme.of(context)
                                                         .textTheme
@@ -717,11 +719,16 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                                                   child: Text('Save'),
                                                   onPressed: () {
                                                     // Update the log entry with the new text and date
-                                                    int logIndex = logs.indexOf(log);
+                                                    int logIndex =
+                                                        logs.indexOf(log);
                                                     setState(() {
-                                                      logs[logIndex] = LogEntry(_editingController.text, _editedDate);
+                                                      logs[logIndex] = LogEntry(
+                                                          _editingController
+                                                              .text,
+                                                          _editedDate);
                                                     });
-                                                    saveLogs(logs); // Save the updated logs
+                                                    saveLogs(
+                                                        logs); // Save the updated logs
                                                     Navigator.of(context).pop();
                                                   },
                                                 ),
@@ -796,7 +803,8 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       FilledButton.icon(
                           onPressed: () {
                             setState(() {
-                              logs.add(LogEntry(_textEditingController.text, _selectedDate));
+                              logs.add(LogEntry(
+                                  _textEditingController.text, _selectedDate));
                             });
                           },
                           style: ButtonStyle(
@@ -858,21 +866,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
                       ),
                       onPressed: () {
                         // Add your history function here
-                      },
-                    ),
-                    FloatingActionButton(
-                      heroTag: "micButton",
-                      child: Icon(Icons.mic, color: Colors.black),
-                      backgroundColor: Color(0xFFCF8E88),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black, width: 2.0),
-                      ),
-                      onPressed: () {
-                        try {
-                          streamingRecognize();
-                        } catch (e) {
-                          print('Error: $e');
-                        }
                       },
                     ),
                   ],

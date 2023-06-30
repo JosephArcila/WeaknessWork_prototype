@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Results()),
+                    MaterialPageRoute(builder: (context) => Journal()),
                   );
                 },
                 backgroundColor: Color(0xFFCF8E88),
@@ -183,14 +183,14 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class Results extends StatefulWidget {
+class Journal extends StatefulWidget {
   final bool startImmediately;
 
-  const Results({Key? key, this.startImmediately = false})
+  const Journal({Key? key, this.startImmediately = false})
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ResultsState();
+  State<StatefulWidget> createState() => _JournalState();
 }
 
 class _ClearButton extends StatelessWidget {
@@ -234,7 +234,7 @@ class LogEntry {
   static LogEntry fromJson(String source) => fromMap(json.decode(source));
 }
 
-class _ResultsState extends State<Results> {
+class _JournalState extends State<Journal> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];
   String text = '';

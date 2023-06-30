@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AudioRecognize()),
+                    MaterialPageRoute(builder: (context) => Results()),
                   );
                 },
                 backgroundColor: Color(0xFFCF8E88),
@@ -192,14 +192,14 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class AudioRecognize extends StatefulWidget {
+class Results extends StatefulWidget {
   final bool startImmediately;
 
-  const AudioRecognize({Key? key, this.startImmediately = false})
+  const Results({Key? key, this.startImmediately = false})
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AudioRecognizeState();
+  State<StatefulWidget> createState() => _ResultsState();
 }
 
 class _ClearButton extends StatelessWidget {
@@ -243,7 +243,7 @@ class LogEntry {
   static LogEntry fromJson(String source) => fromMap(json.decode(source));
 }
 
-class _AudioRecognizeState extends State<AudioRecognize> {
+class _ResultsState extends State<Results> {
   // Create the FirebaseAnalytics instance
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<LogEntry> logs = [];

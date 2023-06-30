@@ -287,7 +287,10 @@ class _JournalState extends State<Journal> {
     // Fetch logs data and convert to List<LogEntry>
     List<dynamic> logsData = documentSnapshot['logs'] ?? [];
     List<LogEntry> logs =
-        logsData.map((item) => LogEntry.fromMap(item)).toList();
+    logsData.map((item) => LogEntry.fromMap(item)).toList();
+
+    // Sort logs by date
+    logs.sort((a, b) => a.date.compareTo(b.date)); // sort in ascending order
 
     return logs;
   }
@@ -454,7 +457,6 @@ class _JournalState extends State<Journal> {
                                                     TextButton(
                                                       child: Text('Save'),
                                                       onPressed: () {
-                                                        // Update the log entry with the new text and date
                                                         int logIndex =
                                                         logs.indexOf(log);
                                                         setState(() {
@@ -541,20 +543,17 @@ class _JournalState extends State<Journal> {
                         ),
                       ),
                       _WODResult(textController: _textEditingController),
-                      FilledButton.icon(
+                      Align(
+                        child: FilledButton.icon(
                           onPressed: () {
                             setState(() {
-                              logs.add(LogEntry(
-                                  _textEditingController.text, _selectedDate));
+                              logs.add(LogEntry(_textEditingController.text, _selectedDate));
                             });
                           },
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Color(0xFFD2DCEA)),
-                            side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(color: Colors.black, width: 2.0)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
+                            backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFD2DCEA)),
+                            side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 2.0)),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(0.0),
                               ),
@@ -564,7 +563,9 @@ class _JournalState extends State<Journal> {
                           label: Text(
                             "Save",
                             style: TextStyle(color: Colors.black),
-                          )),
+                          ),
+                        ),
+                      ),
                     ],
                 ],
               )
